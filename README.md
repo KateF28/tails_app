@@ -1,6 +1,9 @@
 # tails_app
 
-A new Flutter project.
+## A music collection Dart app
+Use `dart run music_collection.dart` to launch a nested Dart music collection app. Classes, mixin and extensions are used in it. sYou may see its work in the GIF below:
+
+![Music collection app work](/music_collection.gif)
 
 ## Getting Started
 
