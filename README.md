@@ -4,11 +4,6 @@ Flutter project. Dogs breed identifier. Please familiarise yourself with the app
 
 ![The tails app wireframe](/app_wireframe.jpg)
 
-## A music collection Dart app
-Use `dart run music_collection.dart` to launch a nested Dart music collection app. Classes, mixin and extensions are used in it. You may see its work in the GIF below:
-
-![Music collection app work](/music_collection.gif)
-
 ## Getting Started
 
 A few resources to get you started if this is your first Flutter project:
