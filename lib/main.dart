@@ -1,8 +1,5 @@
-// Core:
 import 'package:flutter/material.dart';
-// Screens:
 import 'package:tails_app/main_screen.dart';
-// Utils:
 import 'package:tails_app/utils/constants.dart';
 
 void main() {

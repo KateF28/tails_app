@@ -1,8 +1,5 @@
-// Core:
 import 'package:flutter/material.dart';
-// View:
 import 'package:tails_app/presentation/views/home_view.dart';
-// Utils:
 import 'package:tails_app/utils/constants.dart';
 
 /// Main screen with appBar, FAB, BottomNavigationBar

@@ -1,6 +1,4 @@
-// Core:
 import 'package:flutter/material.dart';
-// Models:
 import 'package:tails_app/domain/models/breed.dart';
 
 /// This is main screen widget for the selected breed displaying
