@@ -23,28 +23,22 @@ class _HomeViewState extends State<HomeView> {
     Breed('Border Collie', 'images/border-collie.jpg', _uuid.v4()),
     Breed('Pug', 'images/pug.jpg', _uuid.v4()),
   ];
+  Breed? _selectedBreed;
 
-  void _onListItemTaped(List<Breed> tapedList, int index) {
+  void _onListItemTaped(Breed tapedBreed) {
     setState(() {
-      _breeds = tapedList.map((breed) {
-        if (breed.id == tapedList[index].id) {
-          breed.isSelected = true;
-        } else {
-          breed.isSelected = false;
-        }
-        return breed;
-      }).toList();
+      _selectedBreed = tapedBreed;
     });
   }
 
   @override
   Widget build(BuildContext context) => CustomScrollView(slivers: [
         widget.isListView ? _getSliverList(_breeds) : _getSliverGrid(_breeds),
-        ..._breeds.map((breed) => breed.isSelected
+        _selectedBreed != null
             ? SelectedBreedWidget(
-                breed: breed,
+                breed: _selectedBreed,
               )
-            : const SliverToBoxAdapter(child: SizedBox.shrink())),
+            : const SliverToBoxAdapter(child: SizedBox.shrink()),
       ]);
 
   Widget _getSliverList(List<Breed> breedsList) => SliverList.builder(
@@ -57,6 +51,10 @@ class _HomeViewState extends State<HomeView> {
                 _breeds = breedsList
                     .where((breed) => breed.id != breedsList[index].id)
                     .toList();
+                if (_selectedBreed != null &&
+                    _selectedBreed!.id == breedsList[index].id) {
+                  _selectedBreed = null;
+                }
               });
             },
             child: ListTile(
@@ -66,7 +64,7 @@ class _HomeViewState extends State<HomeView> {
                     Image.asset(breedsList[index].imgUrl, fit: BoxFit.contain),
               ),
               title: Text(breedsList[index].title),
-              onTap: () => _onListItemTaped(breedsList, index),
+              onTap: () => _onListItemTaped(breedsList[index]),
             ),
           );
         },
@@ -77,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemBuilder: (context, idx) => GestureDetector(
-          onTap: () => _onListItemTaped(breedsForGrid, idx),
+          onTap: () => _onListItemTaped(breedsForGrid[idx]),
           child: Card(
             margin: const EdgeInsets.all(10.0),
             child: Container(
