@@ -4,6 +4,10 @@ Flutter project. Dogs breed identifier. Please familiarise yourself with the app
 
 ![The tails app wireframe](/app_wireframe.jpg)
 
+Presentation of the app work:
+
+![Presentation of the app work](/presentation.gif)
+
 ## Getting Started
 
 A few resources to get you started if this is your first Flutter project:

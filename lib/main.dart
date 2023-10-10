@@ -1,7 +1,6 @@
-// Core:
 import 'package:flutter/material.dart';
-// Screens:
 import 'package:tails_app/main_screen.dart';
+import 'package:tails_app/utils/constants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tails App',
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(useMaterial3: true, scaffoldBackgroundColor: bgColor),
       home: const MainScreen(),
     );
   }
