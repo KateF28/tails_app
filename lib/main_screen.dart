@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:tails_app/presentation/views/home_view.dart';
-import 'package:tails_app/domain/models/breeds_group.dart';
-import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
+import 'data/local.dart';
 
 /// Main screen with appBar, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -15,33 +13,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final List<BreedsGroup> _breedsGroups = [
-    BreedsGroup('Sporting Group',
-        'Naturally active and alert, Sporting dogs make likeable, well-rounded companions. First developed to work closely with hunters to locate and/or retrieve quarry. There are four basic types of Sporting dogs; spaniels, pointers, retrievers and setters. Known for their superior instincts in water and woods, many of these breeds enjoy hunting and other field activities. Most of them require regular, invigorating exercise.'),
-    BreedsGroup('Hound Group',
-        'Most hounds share the common ancestral trait of being used for hunting. Some use acute scenting powers to follow a trail. Others demonstrate a phenomenal gift of stamina as they relentlessly run down quarry. There are Pharaoh Hounds, Norwegian Elkhounds, Afghans and Beagles, among others. Some hounds share the distinct ability to produce a unique sound known as baying.'),
-  ];
-  static const Uuid _uuid = Uuid();
-  final List<Breed> _sportingBreeds = [
-    Breed('Barbet', 'images/Barbet.jpg', DateTime(2023, 10, 12), _uuid.v4()),
-    Breed(
-        'Brittany', 'images/Brittany.jpg', DateTime(2023, 10, 12), _uuid.v4()),
-    Breed('Field Spaniel', 'images/Field-Spaniels.jpg', DateTime(2023, 10, 12),
-        _uuid.v4()),
-    Breed('Irish Setter', 'images/Irish-Setter.jpg', DateTime(2023, 10, 12),
-        _uuid.v4()),
-    Breed('Pointer', 'images/Pointer.jpg', DateTime(2023, 10, 12), _uuid.v4()),
-  ];
-  final List<Breed> _houndBreeds = [
-    Breed('Pharaoh Hound', 'images/Pharaoh-Hound.jpg', DateTime(2023, 10, 12),
-        _uuid.v4()),
-    Breed('Norwegian Elkhound', 'images/Norwegian-Elkhound.jpg',
-        DateTime(2023, 10, 12), _uuid.v4()),
-    Breed('Rhodesian Ridgeback', 'images/Rhodesian-Ridgeback.jpg',
-        DateTime(2023, 10, 12), _uuid.v4()),
-    Breed('Saluki', 'images/Saluki.jpg', DateTime(2023, 10, 12), _uuid.v4()),
-    Breed('Sloughi', 'images/Sloughi.jpg', DateTime(2023, 10, 12), _uuid.v4()),
-  ];
 
   void _onDrawerItemTapped(int index) {
     setState(() {
@@ -73,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 70.0),
               child: Text(
-                _breedsGroups[_selectedIndex].description,
+                breedsGroups[_selectedIndex].description,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20.0,
@@ -91,8 +62,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      HomeView(breeds: _sportingBreeds),
-      HomeView(breeds: _houndBreeds),
+      HomeView(breeds: sportingBreeds),
+      HomeView(breeds: houndBreeds),
     ];
 
     return Scaffold(
@@ -124,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        _breedsGroups[0].title,
+                        breedsGroups[0].title,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -138,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        _breedsGroups[1].title,
+                        breedsGroups[1].title,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),

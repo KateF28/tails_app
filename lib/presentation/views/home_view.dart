@@ -13,9 +13,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  int? _selectedChip;
+  int? _selectedBreed;
 
-  void _onListItemTaped(Breed tapedBreed) {
+  void _onBreedSelected(Breed tapedBreed) {
     showGeneralDialog(
       context: context,
       barrierColor: dialogBgColor,
@@ -70,7 +70,7 @@ class _HomeViewState extends State<HomeView> {
       },
     ).then((val) {
       setState(() {
-        _selectedChip = null;
+        _selectedBreed = null;
       });
     });
   }
@@ -84,15 +84,15 @@ class _HomeViewState extends State<HomeView> {
         return CustomScrollView(
           slivers: [
             queryWidth < 481
-                ? _getList(widget.breeds)
-                : _getSliverGrid(widget.breeds, constraints),
+                ? _getBreedsList(widget.breeds)
+                : _getBreedsSliverGrid(widget.breeds, constraints),
           ],
         );
       },
     );
   }
 
-  Widget _getList(List<Breed> breedsList) => SliverToBoxAdapter(
+  Widget _getBreedsList(List<Breed> breedsList) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Wrap(
@@ -101,46 +101,51 @@ class _HomeViewState extends State<HomeView> {
             children: List<Widget>.generate(
               breedsList.length,
               (int index) {
-                return ChoiceChip(
-                  avatarBorder: const CircleBorder(),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  label: Text(
-                    breedsList[index].title,
-                    style: const TextStyle(
-                      color: textColor,
-                    ),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  side: const BorderSide(color: Colors.transparent),
-                  avatar: CircleAvatar(
-                    backgroundImage: AssetImage(breedsList[index].imgUrl),
-                  ),
-                  selected: _selectedChip == index,
-                  onSelected: (bool selected) {
-                    if (selected) {
-                      setState(() {
-                        _selectedChip = index;
-                      });
-                      _onListItemTaped(breedsList[index]);
-                    }
-                  },
-                );
+                return _getBreedChip(breedsList, index);
               },
             ).toList(),
           ),
         ),
       );
 
-  Widget _getSliverGrid(
-          List<Breed> breedsForGrid, BoxConstraints boxConstraints) =>
+  Widget _getBreedChip(List<Breed> breedsForChips, int breedIndex) =>
+      ChoiceChip(
+        avatarBorder: const CircleBorder(),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        label: Text(
+          breedsForChips[breedIndex].title,
+          style: const TextStyle(
+            color: textColor,
+          ),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        side: const BorderSide(color: Colors.transparent),
+        avatar: CircleAvatar(
+          backgroundImage: AssetImage(breedsForChips[breedIndex].imgUrl),
+        ),
+        selected: _selectedBreed == breedIndex,
+        onSelected: (bool selected) {
+          if (selected) {
+            setState(() {
+              _selectedBreed = breedIndex;
+            });
+            _onBreedSelected(breedsForChips[breedIndex]);
+          }
+        },
+      );
+
+  Widget _getBreedsSliverGrid(
+    List<Breed> breedsForGrid,
+    BoxConstraints boxConstraints,
+  ) =>
       SliverGrid.builder(
         itemCount: breedsForGrid.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: boxConstraints.maxWidth < 700 ? 2 : 4),
         itemBuilder: (context, idx) => GestureDetector(
-          onTap: () => _onListItemTaped(breedsForGrid[idx]),
+          onTap: () => _onBreedSelected(breedsForGrid[idx]),
           child: Card(
             margin: const EdgeInsets.all(10.0),
             child: Container(
