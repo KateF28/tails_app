@@ -1,79 +1,144 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
-import 'package:tails_app/presentation/widgets/selected_breed.dart';
 
 /// This is main screen page/view content
 class HomeView extends StatefulWidget {
-  final bool isListView;
+  final List<Breed> breeds;
 
-  const HomeView({super.key, required this.isListView});
+  const HomeView({super.key, required this.breeds});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  static const Uuid _uuid = Uuid();
-  List<Breed> _breeds = [
-    Breed('Maltipoo', 'images/maltipoo.jpg', _uuid.v4()),
-    Breed('Chow-chow', 'images/chow-chow.jpg', _uuid.v4()),
-    Breed('Shih Tzu', 'images/shih-tzu.jpg', _uuid.v4()),
-    Breed('Border Collie', 'images/border-collie.jpg', _uuid.v4()),
-    Breed('Pug', 'images/pug.jpg', _uuid.v4()),
-  ];
-  Breed? _selectedBreed;
+  int? _selectedChip;
 
   void _onListItemTaped(Breed tapedBreed) {
-    setState(() {
-      _selectedBreed = tapedBreed;
+    showGeneralDialog(
+      context: context,
+      barrierColor: dialogBgColor,
+      barrierDismissible: true,
+      barrierLabel: 'Breed photo dialog',
+      transitionDuration: transitionDuration,
+      pageBuilder: (_, __, ___) {
+        return Stack(
+          fit: StackFit.expand,
+          alignment: AlignmentDirectional.topCenter,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 100.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(tapedBreed.imgUrl),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                child: const SizedBox.shrink(),
+              ),
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    tapedBreed.title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 26.0,
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.bold,
+                      color: whiteColor,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${tapedBreed.date.year}-${tapedBreed.date.month}-${tapedBreed.date.day}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                    decoration: TextDecoration.none,
+                    color: whiteColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    ).then((val) {
+      setState(() {
+        _selectedChip = null;
+      });
     });
   }
 
   @override
-  Widget build(BuildContext context) => CustomScrollView(slivers: [
-        widget.isListView ? _getSliverList(_breeds) : _getSliverGrid(_breeds),
-        _selectedBreed != null
-            ? SelectedBreedWidget(
-                breed: _selectedBreed,
-              )
-            : const SliverToBoxAdapter(child: SizedBox.shrink()),
-      ]);
+  Widget build(BuildContext context) {
+    double queryWidth = MediaQuery.of(context).size.width;
 
-  Widget _getSliverList(List<Breed> breedsList) => SliverList.builder(
-        itemCount: breedsList.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: ValueKey<String>(breedsList[index].id),
-            onDismissed: (direction) {
-              setState(() {
-                _breeds = breedsList
-                    .where((breed) => breed.id != breedsList[index].id)
-                    .toList();
-                if (_selectedBreed != null &&
-                    _selectedBreed!.id == breedsList[index].id) {
-                  _selectedBreed = null;
-                }
-              });
-            },
-            child: ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child:
-                    Image.asset(breedsList[index].imgUrl, fit: BoxFit.contain),
-              ),
-              title: Text(breedsList[index].title),
-              onTap: () => _onListItemTaped(breedsList[index]),
-            ),
-          );
-        },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return CustomScrollView(
+          slivers: [
+            queryWidth < 481
+                ? _getList(widget.breeds)
+                : _getSliverGrid(widget.breeds, constraints),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _getList(List<Breed> breedsList) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 20.0,
+            children: List<Widget>.generate(
+              breedsList.length,
+              (int index) {
+                return ChoiceChip(
+                  avatarBorder: const CircleBorder(),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  label: Text(
+                    breedsList[index].title,
+                    style: const TextStyle(
+                      color: textColor,
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  side: const BorderSide(color: Colors.transparent),
+                  avatar: CircleAvatar(
+                    backgroundImage: AssetImage(breedsList[index].imgUrl),
+                  ),
+                  selected: _selectedChip == index,
+                  onSelected: (bool selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedChip = index;
+                      });
+                      _onListItemTaped(breedsList[index]);
+                    }
+                  },
+                );
+              },
+            ).toList(),
+          ),
+        ),
       );
 
-  Widget _getSliverGrid(List<Breed> breedsForGrid) => SliverGrid.builder(
+  Widget _getSliverGrid(
+          List<Breed> breedsForGrid, BoxConstraints boxConstraints) =>
+      SliverGrid.builder(
         itemCount: breedsForGrid.length,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: boxConstraints.maxWidth < 700 ? 2 : 4),
         itemBuilder: (context, idx) => GestureDetector(
           onTap: () => _onListItemTaped(breedsForGrid[idx]),
           child: Card(
@@ -86,19 +151,22 @@ class _HomeViewState extends State<HomeView> {
                   image: AssetImage(breedsForGrid[idx].imgUrl),
                 ),
               ),
-              child:
-                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                  child: Text(
-                    breedsForGrid[idx].title,
-                    style: const TextStyle(
-                        color: whiteColor,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: Text(
+                      breedsForGrid[idx].title,
+                      style: const TextStyle(
+                        color: textColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 20.0),
+                        fontSize: 15.0,
+                      ),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
           ),
         ),
