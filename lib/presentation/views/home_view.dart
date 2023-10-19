@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
@@ -44,7 +45,9 @@ class _HomeViewState extends State<HomeView> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Text(
-                    tapedBreed.title,
+                    Localizations.localeOf(context).languageCode == "uk"
+                        ? tapedBreed.ukTitle
+                        : tapedBreed.title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 26.0,
@@ -84,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
         return CustomScrollView(
           slivers: [
             queryWidth < 481
-                ? _getBreedsList(widget.breeds)
+                ? _getBreedsList(widget.breeds, context)
                 : _getBreedsSliverGrid(widget.breeds, constraints),
           ],
         );
@@ -92,7 +95,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _getBreedsList(List<Breed> breedsList) => SliverToBoxAdapter(
+  Widget _getBreedsList(List<Breed> breedsList, context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Wrap(
@@ -101,22 +104,28 @@ class _HomeViewState extends State<HomeView> {
             children: List<Widget>.generate(
               breedsList.length,
               (int index) {
-                return _getBreedChip(breedsList, index);
+                return _getBreedChip(breedsList, index, context);
               },
             ).toList(),
           ),
         ),
       );
 
-  Widget _getBreedChip(List<Breed> breedsForChips, int breedIndex) =>
+  Widget _getBreedChip(
+    List<Breed> breedsForChips,
+    int breedIndex,
+    BuildContext context,
+  ) =>
       ChoiceChip(
         avatarBorder: const CircleBorder(),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         label: Text(
-          breedsForChips[breedIndex].title,
-          style: const TextStyle(
-            color: textColor,
-          ),
+          Localizations.localeOf(context).languageCode == "uk"
+              ? breedsForChips[breedIndex].ukTitle
+              : breedsForChips[breedIndex].title,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: textColor,
+              ),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
@@ -162,12 +171,12 @@ class _HomeViewState extends State<HomeView> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 5.0),
                     child: Text(
-                      breedsForGrid[idx].title,
-                      style: const TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                      ),
+                      Localizations.localeOf(context).languageCode == "uk"
+                          ? breedsForGrid[idx].ukTitle
+                          : breedsForGrid[idx].title,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: textColor,
+                          ),
                     ),
                   ),
                 ],

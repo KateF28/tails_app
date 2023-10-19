@@ -1,0 +1,26 @@
+{
+  "dogsBreedGroups": "Dogs breed groups",
+  "@dogsBreedGroups": {
+    "description": "This is used in drawer footer"
+  },
+  "ukraine": "Ukraine",
+  "@ukraine": {
+      "description": "Country of the app origin"
+    },
+  "breedsGroups": "Breeds groups",
+  "@breedsGroups": {
+      "description": "The title of drawer header"
+  },
+  "menu": "Menu",
+  "@menu": {
+    "description": "Bottom navigation bar first item title"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Bottom navigation bar last item title"
+  },
+  "lightTheme": "Light theme",
+  "@lightTheme": {
+    "description": "Chosen brightness mode"
+    }
+}

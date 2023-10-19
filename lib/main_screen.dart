@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:tails_app/presentation/views/home_view.dart';
-import 'package:tails_app/utils/constants.dart';
-import 'data/local.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/// Main screen with appBar, FAB, BottomNavigationBar
+import 'package:tails_app/presentation/views/home_view.dart';
+import 'package:tails_app/main.dart';
+import 'package:tails_app/utils/constants.dart';
+import 'package:tails_app/data/local.dart';
+
+/// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({
+    super.key,
+    required this.useLightMode,
+    required this.handleBrightnessChange,
+  });
+
+  final bool useLightMode;
+  final void Function(bool useLightMode) handleBrightnessChange;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -44,7 +55,9 @@ class _MainScreenState extends State<MainScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 70.0),
               child: Text(
-                breedsGroups[_selectedIndex].description,
+                Localizations.localeOf(context).languageCode == 'uk'
+                    ? breedsGroups[_selectedIndex].ukDescription
+                    : breedsGroups[_selectedIndex].description,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 20.0,
@@ -65,14 +78,24 @@ class _MainScreenState extends State<MainScreen> {
       HomeView(breeds: sportingBreeds),
       HomeView(breeds: houndBreeds),
     ];
+    String appCurrentLanguageCode =
+        Localizations.localeOf(context).languageCode;
+    final textTheme = Theme.of(context).textTheme;
+    AppLocalizations? appLocalizations = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Tails App'),
+        title: Text(
+          'Tails App',
+          style: GoogleFonts.roboto(
+            textStyle: textTheme.titleLarge,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
       drawer: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.75,
+        width: MediaQuery.of(context).size.width * 0.80,
         child: Drawer(
           child: Column(
             children: [
@@ -80,22 +103,88 @@ class _MainScreenState extends State<MainScreen> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
-                    const DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: bgColor,
-                      ),
-                      child: Text(
-                        'Breeds groups',
-                        style: TextStyle(
-                          color: textColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
-                        ),
+                    DrawerHeader(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            appLocalizations!.breedsGroups,
+                            style: GoogleFonts.roboto(
+                              textStyle: textTheme.titleLarge!.copyWith(
+                                color: textColor,
+                              ),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    MyApp.setLocale(
+                                        context, const Locale("en", ""));
+                                  });
+                                },
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: const Size(40, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    alignment: Alignment.center),
+                                child: Opacity(
+                                  opacity: appCurrentLanguageCode == 'uk'
+                                      ? 0.5
+                                      : 1.0,
+                                  child: const Text(
+                                    'EN',
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    MyApp.setLocale(
+                                      context,
+                                      const Locale("uk", "UA"),
+                                    );
+                                  });
+                                },
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: const Size(40, 30),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    alignment: Alignment.center),
+                                child: Opacity(
+                                  opacity: appCurrentLanguageCode == 'en'
+                                      ? 0.5
+                                      : 1.0,
+                                  child: const Text(
+                                    'УК',
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     ListTile(
                       title: Text(
-                        breedsGroups[0].title,
+                        appCurrentLanguageCode == 'uk'
+                            ? breedsGroups[0].ukTitle
+                            : breedsGroups[0].title,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -109,7 +198,9 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        breedsGroups[1].title,
+                        appCurrentLanguageCode == 'uk'
+                            ? breedsGroups[1].ukTitle
+                            : breedsGroups[1].title,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -121,15 +212,41 @@ class _MainScreenState extends State<MainScreen> {
                         Navigator.pop(context);
                       },
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17.0, 30.0, 19.0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            appLocalizations.lightTheme,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          Switch(
+                              value: widget.useLightMode,
+                              onChanged: (value) {
+                                widget.handleBrightnessChange(value);
+                              })
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
                 child: Column(
                   children: [
-                    Text('Breeds groups'),
-                    Text('Ukraine'),
+                    Text(
+                      appLocalizations.dogsBreedGroups,
+                      style: GoogleFonts.merriweather(),
+                    ),
+                    Text(
+                      appLocalizations.ukraine,
+                      style: GoogleFonts.merriweather(),
+                    ),
                   ],
                 ),
               ),
@@ -147,20 +264,19 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: 1,
         showSelectedLabels: false,
         selectedIconTheme: const IconThemeData(size: 40),
-        backgroundColor: whiteColor,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: const Icon(Icons.search),
+            label: appLocalizations.search,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.camera_alt),
             label: '',
             tooltip: 'Add a dog',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view),
-            label: 'Menu',
+            icon: const Icon(Icons.grid_view),
+            label: appLocalizations.menu,
           ),
         ],
       ),
