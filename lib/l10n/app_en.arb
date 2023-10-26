@@ -7,9 +7,9 @@
   "@ukraine": {
       "description": "Country of the app origin"
     },
-  "breedsGroups": "Breeds groups",
-  "@breedsGroups": {
-      "description": "The title of drawer header"
+  "breeds": "Breeds",
+  "@breeds": {
+      "description": "The title of the first drawer item"
   },
   "menu": "Menu",
   "@menu": {
@@ -22,5 +22,19 @@
   "lightTheme": "Light theme",
   "@lightTheme": {
     "description": "Chosen brightness mode"
+  },
+  "deletedBreedsCount": "Deleted breeds count: {count}",
+  "@deletedBreedsCount": {
+    "description": "Shows deleted breeds count",
+    "placeholders": {
+        "count": {
+          "type": "String",
+          "example": "0"
+        }
     }
+  },
+  "addBreed": "Add a breed",
+  "@addBreed": {
+    "description": "Adding breed dialog title"
+  }
 }

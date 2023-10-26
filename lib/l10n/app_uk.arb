@@ -1,9 +1,11 @@
 {
   "dogsBreedGroups": "Групи порід собак",
   "ukraine": "Україна",
-  "breedsGroups": "Групи порід",
+  "breeds": "Породи",
   "sportingGroup": "Група спорту",
   "menu": "Меню",
   "search": "Пошук",
-  "lightTheme": "Світла тема"
+  "lightTheme": "Світла тема",
+  "deletedBreedsCount": "Кількість видалених порід: {count}",
+  "addBreed": "Додай породу"
 }

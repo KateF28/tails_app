@@ -2,7 +2,7 @@
 
 Flutter project. Dogs breed identifier. Please familiarise yourself with the app at the structural level in the app wireframe below:
 
-![The tails app wireframe](/app_wireframe.jpg)
+![The tails app wireframe](/app_wireframe.png)
 
 Presentation of the app work:
 

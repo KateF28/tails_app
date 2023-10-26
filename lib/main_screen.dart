@@ -4,8 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/main.dart';
+import 'package:tails_app/domain/models/breed.dart';
+import 'package:tails_app/data/repository.dart';
+import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/utils/constants.dart';
-import 'package:tails_app/data/local.dart';
+import 'package:tails_app/data/datasources/local.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -24,6 +27,16 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  Breed _dropdownValue = breedsForAdding.first;
+  late MockRepository _repository;
+  late List<Breed> _breeds;
+
+  @override
+  void initState() {
+    _repository = MockRepository(MockAPI());
+    _breeds = List.empty(growable: true);
+    super.initState();
+  }
 
   void _onDrawerItemTapped(int index) {
     setState(() {
@@ -35,8 +48,8 @@ class _MainScreenState extends State<MainScreen> {
     showGeneralDialog(
       context: context,
       barrierColor: dialogBgColor,
-      barrierDismissible: false,
-      barrierLabel: 'Breeds group information dialog',
+      barrierDismissible: true,
+      barrierLabel: 'Adding a breed dialog',
       transitionDuration: transitionDuration,
       pageBuilder: (_, __, ___) {
         return Stack(
@@ -45,24 +58,39 @@ class _MainScreenState extends State<MainScreen> {
           children: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.close,
+                Icons.add,
                 color: whiteColor,
                 size: 40.0,
               ),
               tooltip: 'Close dialog',
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                _repository.addBreed(_dropdownValue);
+                setState(() {
+                  _breeds.add(_dropdownValue);
+                });
+                Navigator.pop(context);
+              },
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 70.0),
-              child: Text(
-                Localizations.localeOf(context).languageCode == 'uk'
-                    ? breedsGroups[_selectedIndex].ukDescription
-                    : breedsGroups[_selectedIndex].description,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  decoration: TextDecoration.none,
-                  color: whiteColor,
+              padding: const EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 70.0),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Text(
+                        AppLocalizations.of(context)!.addBreed,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          decoration: TextDecoration.none,
+                          color: whiteColor,
+                        ),
+                      ),
+                    ),
+                    _buildNewBreedDropdown(context),
+                  ],
                 ),
               ),
             ),
@@ -74,10 +102,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> widgetOptions = <Widget>[
-      HomeView(breeds: sportingBreeds),
-      HomeView(breeds: houndBreeds),
-    ];
     String appCurrentLanguageCode =
         Localizations.localeOf(context).languageCode;
     final textTheme = Theme.of(context).textTheme;
@@ -105,86 +129,66 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     DrawerHeader(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            appLocalizations!.breedsGroups,
-                            style: GoogleFonts.roboto(
-                              textStyle: textTheme.titleLarge!.copyWith(
-                                color: textColor,
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                MyApp.setLocale(
+                                    context, const Locale("en", ""));
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(40, 30),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.center),
+                            child: Opacity(
+                              opacity:
+                                  appCurrentLanguageCode == 'uk' ? 0.5 : 1.0,
+                              child: const Text(
+                                'EN',
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
+                                ),
                               ),
-                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    MyApp.setLocale(
-                                        context, const Locale("en", ""));
-                                  });
-                                },
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: const Size(40, 30),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    alignment: Alignment.center),
-                                child: Opacity(
-                                  opacity: appCurrentLanguageCode == 'uk'
-                                      ? 0.5
-                                      : 1.0,
-                                  child: const Text(
-                                    'EN',
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.0,
-                                    ),
-                                  ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                MyApp.setLocale(
+                                  context,
+                                  const Locale("uk", "UA"),
+                                );
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(40, 30),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.center),
+                            child: Opacity(
+                              opacity:
+                                  appCurrentLanguageCode == 'en' ? 0.5 : 1.0,
+                              child: const Text(
+                                'УК',
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
                                 ),
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    MyApp.setLocale(
-                                      context,
-                                      const Locale("uk", "UA"),
-                                    );
-                                  });
-                                },
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: const Size(40, 30),
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    alignment: Alignment.center),
-                                child: Opacity(
-                                  opacity: appCurrentLanguageCode == 'en'
-                                      ? 0.5
-                                      : 1.0,
-                                  child: const Text(
-                                    'УК',
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                     ListTile(
                       title: Text(
-                        appCurrentLanguageCode == 'uk'
-                            ? breedsGroups[0].ukTitle
-                            : breedsGroups[0].title,
+                        appLocalizations!.breeds,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -193,22 +197,6 @@ class _MainScreenState extends State<MainScreen> {
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         _onDrawerItemTapped(0);
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      title: Text(
-                        appCurrentLanguageCode == 'uk'
-                            ? breedsGroups[1].ukTitle
-                            : breedsGroups[1].title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      selected: _selectedIndex == 1,
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        _onDrawerItemTapped(1);
                         Navigator.pop(context);
                       },
                     ),
@@ -254,11 +242,11 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      body: widgetOptions[_selectedIndex],
+      body: HomeView(breeds: _breeds),
       floatingActionButton: FloatingActionButton(
         onPressed: _onFABPressed,
-        tooltip: 'Show selected breeds group information',
-        child: const Icon(Icons.info_outline_rounded),
+        tooltip: 'Add a breed',
+        child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
@@ -282,4 +270,28 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
+  /// The function returns DropDown for a new breed selection
+  Widget _buildNewBreedDropdown(ctx) => DropdownButtonFormField<String>(
+        value: _dropdownValue.title,
+        icon: const Icon(Icons.arrow_downward, color: whiteColor),
+        elevation: 16,
+        style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
+              color: textColor,
+            ),
+        onChanged: (String? value) {
+          setState(() {
+            _dropdownValue =
+                breedsForAdding.firstWhere((breed) => breed.title == value!);
+          });
+        },
+        items: breedsForAdding.map<DropdownMenuItem<String>>((Breed value) {
+          return DropdownMenuItem<String>(
+            value: value.title,
+            child: Text(Localizations.localeOf(ctx).languageCode == "uk"
+                ? value.ukTitle
+                : value.title),
+          );
+        }).toList(),
+      );
 }
