@@ -28,6 +28,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   Breed _dropdownValue = breedsForAdding.first;
+  final List<Breed> _breedsForAdding = breedsForAdding;
   late MockRepository _repository;
   late List<Breed> _breeds;
 
@@ -67,6 +68,10 @@ class _MainScreenState extends State<MainScreen> {
                 _repository.addBreed(_dropdownValue);
                 setState(() {
                   _breeds.add(_dropdownValue);
+                  _breedsForAdding.remove(_dropdownValue);
+                  if (_breedsForAdding.isNotEmpty) {
+                    _dropdownValue = _breedsForAdding.first;
+                  }
                 });
                 Navigator.pop(context);
               },
@@ -243,11 +248,13 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: HomeView(breeds: _breeds),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onFABPressed,
-        tooltip: 'Open dialog for adding a breed',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _breedsForAdding.isEmpty
+          ? null
+          : FloatingActionButton(
+              onPressed: _onFABPressed,
+              tooltip: 'Open dialog for adding a breed',
+              child: const Icon(Icons.add),
+            ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         showSelectedLabels: false,
