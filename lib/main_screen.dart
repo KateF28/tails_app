@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
                 color: whiteColor,
                 size: 40.0,
               ),
-              tooltip: 'Close dialog',
+              tooltip: 'Add breed and close dialog',
               onPressed: () {
                 _repository.addBreed(_dropdownValue);
                 setState(() {
@@ -245,7 +245,7 @@ class _MainScreenState extends State<MainScreen> {
       body: HomeView(breeds: _breeds),
       floatingActionButton: FloatingActionButton(
         onPressed: _onFABPressed,
-        tooltip: 'Add a breed',
+        tooltip: 'Open dialog for adding a breed',
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(

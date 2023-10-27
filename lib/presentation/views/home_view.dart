@@ -7,7 +7,7 @@ import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
-int _countDeletedBreeds(int value) => value + 1;
+int _countDeletedBreeds(int value) => ++value;
 
 /// This is main screen page/view content
 class HomeView extends StatefulWidget {
@@ -31,12 +31,6 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _repository = MockRepository(MockAPI());
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant HomeView oldWidget) {
-    _repository.fetchBreeds();
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -96,6 +90,8 @@ class _HomeViewState extends State<HomeView> {
                                   right: breedStatus != 'initial' ? 5.0 : 10.0),
                               curve: Curves.fastOutSlowIn,
                               child: Checkbox(
+                                semanticLabel:
+                                    'Toggle initial and checked breed statuses',
                                 value: breedStatus != 'initial',
                                 onChanged: (bool? value) async {
                                   setState(() => breedStatus =
