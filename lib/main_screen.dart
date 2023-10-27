@@ -3,12 +3,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
-import 'package:tails_app/main.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/utils/constants.dart';
-import 'package:tails_app/data/datasources/local.dart';
+import 'package:tails_app/data/datasources/local/breeds.dart';
+import 'package:tails_app/data/datasources/local/locale_provider.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -111,6 +111,7 @@ class _MainScreenState extends State<MainScreen> {
         Localizations.localeOf(context).languageCode;
     final textTheme = Theme.of(context).textTheme;
     AppLocalizations? appLocalizations = AppLocalizations.of(context);
+    var localeProvider = LocaleProvider.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -138,10 +139,8 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              setState(() {
-                                MyApp.setLocale(
-                                    context, const Locale("en", ""));
-                              });
+                              localeProvider
+                                  .changeLocale(const Locale("en", ""));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -163,12 +162,8 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              setState(() {
-                                MyApp.setLocale(
-                                  context,
-                                  const Locale("uk", "UA"),
-                                );
-                              });
+                              localeProvider
+                                  .changeLocale(const Locale("uk", "UA"));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
