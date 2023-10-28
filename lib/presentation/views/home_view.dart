@@ -44,13 +44,14 @@ class _HomeViewState extends State<HomeView> {
             initialData: List<Breed>.empty(growable: true),
             builder: (_, AsyncSnapshot<List<Breed>> snapshot) {
               Widget breedsListSliver;
+              List<Breed>? breedsSnapshot = snapshot.requireData;
 
               if (snapshot.hasData) {
                 breedsListSliver = SliverList.builder(
-                    itemCount: snapshot.data!.length,
+                    itemCount: breedsSnapshot.length,
                     itemBuilder: (context, index) {
-                      String breedStatus = snapshot.data![index].status;
-                      String breedId = snapshot.data![index].id;
+                      String breedStatus = breedsSnapshot[index].status;
+                      String breedId = breedsSnapshot[index].id;
 
                       return Dismissible(
                         key: UniqueKey(),
@@ -66,8 +67,8 @@ class _HomeViewState extends State<HomeView> {
                         child: ListTile(
                           title: Text(
                             Localizations.localeOf(context).languageCode == "uk"
-                                ? snapshot.data![index].ukTitle
-                                : snapshot.data![index].title,
+                                ? breedsSnapshot[index].ukTitle
+                                : breedsSnapshot[index].title,
                             style:
                                 Theme.of(context).textTheme.bodyLarge!.copyWith(
                                       color: textColor,
@@ -75,7 +76,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           leading: CircleAvatar(
                             backgroundImage: AssetImage(
-                              snapshot.data?[index].imgUrl ?? '',
+                              breedsSnapshot[index].imgUrl,
                             ),
                           ),
                           trailing: StatefulBuilder(
