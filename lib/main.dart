@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    _removeBreedsCache();
     _fetchLocale().then((locale) {
       setState(() {
         _locale = locale;
@@ -59,6 +60,12 @@ class _MyAppState extends State<MyApp> {
       case ThemeMode.dark:
         return false;
     }
+  }
+
+  // Clean up the breedsCache value of shared preferences when the app is launched
+  void _removeBreedsCache() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('breedsCache', '');
   }
 
   /*
