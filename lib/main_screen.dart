@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/data/repository.dart';
-import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
-import 'package:tails_app/data/datasources/local/locale_provider.dart';
+import 'package:tails_app/data/datasources/local/locale_notifier.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -29,12 +29,10 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerTileIndex = 0;
   Breed _chosenDropdownValue = breedsForAdding.first;
   final List<Breed> _breedsForAdding = breedsForAdding;
-  late MockRepository _repository;
   late List<Breed> _breeds;
 
   @override
   void initState() {
-    _repository = MockRepository(MockAPI());
     _breeds = List.empty(growable: true);
     super.initState();
   }
@@ -47,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
 
   // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
   Future<void> _onBreedAddingDialogClosed() async {
-    await _repository.addBreed(_chosenDropdownValue);
+    await context.read<MockRepository>().addBreed(_chosenDropdownValue);
 
     setState(() {
       _breeds.add(_chosenDropdownValue);
@@ -118,7 +116,6 @@ class _MainScreenState extends State<MainScreen> {
         Localizations.localeOf(context).languageCode;
     final textTheme = Theme.of(context).textTheme;
     AppLocalizations? appLocalizations = AppLocalizations.of(context);
-    var localeProvider = LocaleProvider.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -146,7 +143,8 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              localeProvider
+                              context
+                                  .read<LocaleNotifier>()
                                   .changeLocale(const Locale("en", ""));
                             },
                             style: TextButton.styleFrom(
@@ -169,7 +167,8 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              localeProvider
+                              context
+                                  .read<LocaleNotifier>()
                                   .changeLocale(const Locale("uk", "UA"));
                             },
                             style: TextButton.styleFrom(

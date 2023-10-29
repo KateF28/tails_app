@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tails_app/data/repository.dart';
-import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
@@ -15,23 +15,21 @@ class BreedsList extends StatefulWidget {
 }
 
 class _BreedsListState extends State<BreedsList> {
-  late MockRepository _repository;
-
   @override
   void initState() {
-    _repository = MockRepository(MockAPI());
     super.initState();
   }
 
   Future<void> _dismissBreed(String dismissedBreedId) async {
-    int deletedBreedsCount = await _repository.deleteBreed(dismissedBreedId);
+    int deletedBreedsCount =
+        await context.read<MockRepository>().deleteBreed(dismissedBreedId);
     widget.countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _repository.fetchBreeds(),
+      future: context.read<MockRepository>().fetchBreeds(),
       initialData: List<Breed>.empty(growable: true),
       builder: (
         BuildContext context,
@@ -85,9 +83,10 @@ class _BreedsListState extends State<BreedsList> {
                           onChanged: (bool? value) async {
                             setState(() => breedStatus =
                                 value == false ? 'initial' : 'checked');
-                            await _repository.updateBreedStatus(breedId,
-                                value == false ? 'initial' : 'checked');
-                            await _repository.fetchBreeds();
+                            await context
+                                .read<MockRepository>()
+                                .updateBreedStatus(breedId,
+                                    value == false ? 'initial' : 'checked');
                           },
                         ),
                       ),
