@@ -48,9 +48,10 @@ class _BreedsListState extends State<BreedsList> {
                 String breedId = breedsSnapshot[index].id;
 
                 return Dismissible(
-                  key: UniqueKey(),
+                  key: Key(breedId),
                   onDismissed: (direction) async {
                     await _dismissBreed(breedId);
+                    breedsSnapshot.removeAt(index);
                   },
                   child: ListTile(
                     title: Text(
