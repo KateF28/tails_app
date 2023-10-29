@@ -26,8 +26,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-  Breed _dropdownValue = breedsForAdding.first;
+  int _selectedDrawerTileIndex = 0;
+  Breed _chosenDropdownValue = breedsForAdding.first;
   final List<Breed> _breedsForAdding = breedsForAdding;
   late MockRepository _repository;
   late List<Breed> _breeds;
@@ -41,10 +41,24 @@ class _MainScreenState extends State<MainScreen> {
 
   void _onDrawerItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedDrawerTileIndex = index;
     });
   }
 
+  // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
+  Future<void> _onBreedAddingDialogClosed() async {
+    await _repository.addBreed(_chosenDropdownValue);
+
+    setState(() {
+      _breeds.add(_chosenDropdownValue);
+      _breedsForAdding.remove(_chosenDropdownValue);
+      if (_breedsForAdding.isNotEmpty) {
+        _chosenDropdownValue = _breedsForAdding.first;
+      }
+    });
+  }
+
+  // Open dialog for adding a new breed
   void _onFABPressed() {
     showGeneralDialog(
       context: context,
@@ -65,14 +79,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               tooltip: 'Add breed and close dialog',
               onPressed: () {
-                _repository.addBreed(_dropdownValue);
-                setState(() {
-                  _breeds.add(_dropdownValue);
-                  _breedsForAdding.remove(_dropdownValue);
-                  if (_breedsForAdding.isNotEmpty) {
-                    _dropdownValue = _breedsForAdding.first;
-                  }
-                });
+                _onBreedAddingDialogClosed();
                 Navigator.pop(context);
               },
             ),
@@ -193,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      selected: _selectedIndex == 0,
+                      selected: _selectedDrawerTileIndex == 0,
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         _onDrawerItemTapped(0);
@@ -244,7 +251,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: HomeView(breeds: _breeds),
       floatingActionButton: _breedsForAdding.isEmpty
-          ? null
+          ? const SizedBox.shrink()
           : FloatingActionButton(
               onPressed: _onFABPressed,
               tooltip: 'Open dialog for adding a breed',
@@ -275,7 +282,7 @@ class _MainScreenState extends State<MainScreen> {
 
   /// The function returns DropDown for a new breed selection
   Widget _buildNewBreedDropdown(ctx) => DropdownButtonFormField<String>(
-        value: _dropdownValue.title,
+        value: _chosenDropdownValue.title,
         icon: const Icon(Icons.arrow_downward, color: whiteColor),
         elevation: 16,
         style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
@@ -283,7 +290,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
         onChanged: (String? value) {
           setState(() {
-            _dropdownValue =
+            _chosenDropdownValue =
                 breedsForAdding.firstWhere((breed) => breed.title == value!);
           });
         },

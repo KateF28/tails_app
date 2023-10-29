@@ -10,30 +10,30 @@ class MockAPI {
 
     return [
       Breed(
+          id: _uuid.v4(),
           title: 'Barbet',
           ukTitle: 'Барбет',
-          imgUrl: 'images/Barbet.jpg',
-          id: _uuid.v4()),
+          imgUrl: 'images/Barbet.jpg'),
       Breed(
+          id: _uuid.v4(),
           title: 'Brittany',
           ukTitle: 'Бретань',
-          imgUrl: 'images/Brittany.jpg',
-          id: _uuid.v4()),
+          imgUrl: 'images/Brittany.jpg'),
       Breed(
+          id: _uuid.v4(),
           title: 'Field Spaniel',
           ukTitle: 'Філд спаніель',
-          imgUrl: 'images/Field-Spaniels.jpg',
-          id: _uuid.v4()),
+          imgUrl: 'images/Field-Spaniels.jpg'),
       Breed(
+          id: _uuid.v4(),
           title: 'Irish Setter',
           ukTitle: 'Ірландський сетер',
-          imgUrl: 'images/Irish-Setter.jpg',
-          id: _uuid.v4()),
+          imgUrl: 'images/Irish-Setter.jpg'),
       Breed(
+          id: _uuid.v4(),
           title: 'Pointer',
           ukTitle: 'Поінтер',
-          imgUrl: 'images/Pointer.jpg',
-          id: _uuid.v4()),
+          imgUrl: 'images/Pointer.jpg'),
     ];
   }
 }

@@ -36,7 +36,7 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
   }
 
   // Clean up the breedsCache value of shared preferences when the app is launched
-  void _removeBreedsCache() async {
+  Future<void> _removeBreedsCache() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('breedsCache', '');
   }

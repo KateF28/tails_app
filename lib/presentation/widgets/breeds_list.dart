@@ -69,14 +69,14 @@ class _BreedsListState extends State<BreedsList> {
                     ),
                     trailing: StatefulBuilder(
                       builder: (context, setState) => AnimatedContainer(
-                        width: breedStatus != 'initial' ? 30.0 : 20.0,
-                        height: breedStatus != 'initial' ? 30.0 : 20.0,
-                        color: breedStatus != 'initial'
-                            ? textColor
-                            : Colors.transparent,
+                        width: breedStatus == 'initial' ? 20.0 : 30.0,
+                        height: breedStatus == 'initial' ? 20.0 : 30.0,
+                        color: breedStatus == 'initial'
+                            ? Colors.transparent
+                            : textColor,
                         duration: const Duration(seconds: 1),
                         margin: EdgeInsets.only(
-                            right: breedStatus != 'initial' ? 5.0 : 10.0),
+                            right: breedStatus == 'initial' ? 10.0 : 5.0),
                         curve: Curves.fastOutSlowIn,
                         child: Checkbox(
                           semanticLabel:
@@ -84,9 +84,9 @@ class _BreedsListState extends State<BreedsList> {
                           value: breedStatus != 'initial',
                           onChanged: (bool? value) async {
                             setState(() => breedStatus =
-                                value != true ? 'initial' : 'checked');
-                            await _repository.updateBreedStatus(
-                                breedId, value != true ? 'initial' : 'checked');
+                                value == false ? 'initial' : 'checked');
+                            await _repository.updateBreedStatus(breedId,
+                                value == false ? 'initial' : 'checked');
                             await _repository.fetchBreeds();
                           },
                         ),
