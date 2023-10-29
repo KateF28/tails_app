@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/domain/models/breed.dart';
 
+int _countDeletedBreeds(int value) => ++value;
+
 class MockRepository {
   late MockAPI api;
+  int _deletedBreedsCount = 0;
 
   MockRepository(this.api);
 
@@ -40,10 +44,16 @@ class MockRepository {
     await _cacheBreeds(cachedBreeds);
   }
 
-  Future<void> deleteBreed(String id) async {
+  Future<int> deleteBreed(String id) async {
     String? prevBreedsString = await _getBreedsFromCache();
-    List<Breed> filteredBreeds = Breed.decode(prevBreedsString!).where((breed) => breed.id != id).toList();
+    List<Breed> filteredBreeds = Breed.decode(prevBreedsString!)
+        .where((breed) => breed.id != id)
+        .toList();
     await _cacheBreeds(filteredBreeds);
+    int newDeletedBreedsCount =
+        await compute(_countDeletedBreeds, _deletedBreedsCount);
+    _deletedBreedsCount = newDeletedBreedsCount;
+    return newDeletedBreedsCount;
   }
 
   Future<void> updateBreedStatus(String breedId, String updatedStatus) async {

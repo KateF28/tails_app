@@ -6,9 +6,9 @@ import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
 class BreedsList extends StatefulWidget {
-  const BreedsList({super.key, required this.removedBreedsCount});
+  const BreedsList({super.key, required this.countRemovedBreeds});
 
-  final Future<void> Function() removedBreedsCount;
+  final void Function(int) countRemovedBreeds;
 
   @override
   State<BreedsList> createState() => _BreedsListState();
@@ -21,6 +21,11 @@ class _BreedsListState extends State<BreedsList> {
   void initState() {
     _repository = MockRepository(MockAPI());
     super.initState();
+  }
+
+  Future<void> _dismissBreed(String dismissedBreedId) async {
+    int deletedBreedsCount = await _repository.deleteBreed(dismissedBreedId);
+    widget.countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
@@ -43,11 +48,9 @@ class _BreedsListState extends State<BreedsList> {
                 String breedId = breedsSnapshot[index].id;
 
                 return Dismissible(
-                  key: Key(breedId),
+                  key: UniqueKey(),
                   onDismissed: (direction) async {
-                    await widget.removedBreedsCount();
-                    breedsSnapshot.removeAt(index);
-                    await _repository.deleteBreed(breedId);
+                    await _dismissBreed(breedId);
                   },
                   child: ListTile(
                     title: Text(

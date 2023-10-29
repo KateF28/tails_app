@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/presentation/widgets/breeds_list.dart';
-
-int _countDeletedBreeds(int value) => ++value;
 
 /// This is main screen page/view content
 class HomeView extends StatefulWidget {
@@ -20,10 +17,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int _deletedBreedsCount = 0;
 
-  Future<void> _removedBreedsCount() async {
-    await compute(_countDeletedBreeds, _deletedBreedsCount);
+  void _countRemovedBreeds(int deletedBreedsCount) {
     setState(() {
-      _deletedBreedsCount = ++_deletedBreedsCount;
+      _deletedBreedsCount = deletedBreedsCount;
     });
   }
 
@@ -41,7 +37,7 @@ class _HomeViewState extends State<HomeView> {
                 style: Theme.of(context).textTheme.bodyLarge!,
               ),
             ),
-            BreedsList(removedBreedsCount: _removedBreedsCount),
+            BreedsList(countRemovedBreeds: _countRemovedBreeds),
           ],
         );
       },
