@@ -1,117 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
+import 'package:tails_app/domain/breeds_list.dart';
 
-class BreedsList extends StatefulWidget {
-  const BreedsList({super.key, required this.countRemovedBreeds});
+class BreedsListWidget extends ConsumerStatefulWidget {
+  const BreedsListWidget({super.key, required this.countRemovedBreeds});
 
   final void Function(int) countRemovedBreeds;
 
   @override
-  State<BreedsList> createState() => _BreedsListState();
+  ConsumerState<BreedsListWidget> createState() => _BreedsListState();
 }
 
-class _BreedsListState extends State<BreedsList> {
+class _BreedsListState extends ConsumerState<BreedsListWidget> {
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    _getInitialBreeds();
+    super.didChangeDependencies();
+  }
+
+  Future<void> _getInitialBreeds() async {
+    List<Breed> initialBreeds =
+        await context.read<MockRepository>().fetchBreeds();
+    ref.read(breedsProvider.notifier).addBreeds(initialBreeds);
   }
 
   Future<void> _dismissBreed(String dismissedBreedId) async {
+    ref.read(breedsProvider.notifier).deleteBreed(dismissedBreedId);
     int deletedBreedsCount =
-        await context.read<MockRepository>().deleteBreed(dismissedBreedId);
+        await context.read<MockRepository>().computeDeletedBreedsCount();
     widget.countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: context.read<MockRepository>().fetchBreeds(),
-      initialData: List<Breed>.empty(growable: true),
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<List<Breed>> snapshot,
-      ) {
-        Widget breedsListSliver;
-        List<Breed>? breedsSnapshot = snapshot.requireData;
+    List<Breed> breeds = ref.watch(breedsProvider);
 
-        if (snapshot.hasData) {
-          breedsListSliver = SliverList.builder(
-              itemCount: breedsSnapshot.length,
-              itemBuilder: (context, index) {
-                String breedStatus = breedsSnapshot[index].status;
-                String breedId = breedsSnapshot[index].id;
+    return CustomScrollView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      slivers: [
+        breeds.isEmpty
+            ? const SliverToBoxAdapter(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: textColor,
+                  ),
+                ),
+              )
+            : SliverList.builder(
+                itemCount: breeds.length,
+                itemBuilder: (context, index) {
+                  String breedStatus = breeds[index].status;
+                  String breedId = breeds[index].id;
 
-                return Dismissible(
-                  key: Key(breedId),
-                  onDismissed: (direction) async {
-                    await _dismissBreed(breedId);
-                    breedsSnapshot.removeAt(index);
-                  },
-                  child: ListTile(
-                    title: Text(
-                      Localizations.localeOf(context).languageCode == "uk"
-                          ? breedsSnapshot[index].ukTitle
-                          : breedsSnapshot[index].title,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: textColor,
-                          ),
-                    ),
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(
-                        breedsSnapshot[index].imgUrl,
+                  return Dismissible(
+                    key: Key(breedId),
+                    onDismissed: (direction) async {
+                      await _dismissBreed(breedId);
+                      // breeds.removeAt(index);
+                    },
+                    child: ListTile(
+                      title: Text(
+                        Localizations.localeOf(context).languageCode == "uk"
+                            ? breeds[index].ukTitle
+                            : breeds[index].title,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: textColor,
+                            ),
                       ),
-                    ),
-                    trailing: StatefulBuilder(
-                      builder: (context, setState) => AnimatedContainer(
-                        width: breedStatus == 'initial' ? 20.0 : 30.0,
-                        height: breedStatus == 'initial' ? 20.0 : 30.0,
-                        color: breedStatus == 'initial'
-                            ? Colors.transparent
-                            : textColor,
-                        duration: const Duration(seconds: 1),
-                        margin: EdgeInsets.only(
-                            right: breedStatus == 'initial' ? 10.0 : 5.0),
-                        curve: Curves.fastOutSlowIn,
-                        child: Checkbox(
-                          semanticLabel:
-                              'Toggle initial and checked breed statuses',
-                          value: breedStatus != 'initial',
-                          onChanged: (bool? value) async {
-                            setState(() => breedStatus =
-                                value == false ? 'initial' : 'checked');
-                            await context
-                                .read<MockRepository>()
-                                .updateBreedStatus(breedId,
-                                    value == false ? 'initial' : 'checked');
-                          },
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(
+                          breeds[index].imgUrl,
+                        ),
+                      ),
+                      trailing: StatefulBuilder(
+                        builder: (context, setState) => AnimatedContainer(
+                          width: breedStatus == 'initial' ? 20.0 : 30.0,
+                          height: breedStatus == 'initial' ? 20.0 : 30.0,
+                          color: breedStatus == 'initial'
+                              ? Colors.transparent
+                              : textColor,
+                          duration: const Duration(seconds: 1),
+                          margin: EdgeInsets.only(
+                              right: breedStatus == 'initial' ? 10.0 : 5.0),
+                          curve: Curves.fastOutSlowIn,
+                          child: Checkbox(
+                            semanticLabel:
+                                'Toggle initial and checked breed statuses',
+                            value: breedStatus != 'initial',
+                            onChanged: (bool? value) {
+                              setState(() => breedStatus =
+                                  value == false ? 'initial' : 'checked');
+                              ref
+                                  .read(breedsProvider.notifier)
+                                  .updateBreedStatus(breedId,
+                                      value == false ? 'initial' : 'checked');
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              });
-        } else {
-          breedsListSliver = const SliverToBoxAdapter(
-            child: Center(
-              child: CircularProgressIndicator(
-                color: textColor,
-              ),
-            ),
-          );
-        }
-
-        return CustomScrollView(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          slivers: [
-            breedsListSliver,
-          ],
-        );
-      },
+                  );
+                }),
+      ],
     );
   }
 }

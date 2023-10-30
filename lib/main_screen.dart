@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/domain/models/breed.dart';
-import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
 import 'package:tails_app/data/datasources/local/locale_notifier.dart';
+import 'package:tails_app/domain/breeds_list.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({
     super.key,
     required this.useLightMode,
@@ -22,20 +23,13 @@ class MainScreen extends StatefulWidget {
   final void Function(bool useLightMode) handleBrightnessChange;
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedDrawerTileIndex = 0;
   Breed _chosenDropdownValue = breedsForAdding.first;
   final List<Breed> _breedsForAdding = breedsForAdding;
-  late List<Breed> _breeds;
-
-  @override
-  void initState() {
-    _breeds = List.empty(growable: true);
-    super.initState();
-  }
 
   void _onDrawerItemTapped(int index) {
     setState(() {
@@ -44,11 +38,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
-  Future<void> _onBreedAddingDialogClosed() async {
-    await context.read<MockRepository>().addBreed(_chosenDropdownValue);
+  void _onBreedAddingDialogClosed() {
+    ref.read(breedsProvider.notifier).addBreed(_chosenDropdownValue);
 
     setState(() {
-      _breeds.add(_chosenDropdownValue);
       _breedsForAdding.remove(_chosenDropdownValue);
       if (_breedsForAdding.isNotEmpty) {
         _chosenDropdownValue = _breedsForAdding.first;
@@ -248,7 +241,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      body: HomeView(breeds: _breeds),
+      body: const HomeView(),
       floatingActionButton: _breedsForAdding.isEmpty
           ? const SizedBox.shrink()
           : FloatingActionButton(

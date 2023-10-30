@@ -22,12 +22,6 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
   static const _colorSchemeSeed = Color(0xFF7950f2);
 
   @override
-  void initState() {
-    super.initState();
-    _removeBreedsCache();
-  }
-
-  @override
   void didChangeDependencies() {
     _fetchLocale().then((locale) {
       context.read<LocaleNotifier>().changeLocale(locale);
@@ -44,12 +38,6 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
     String countryCode = prefs.getString('countryCode') ?? 'UA';
 
     return Locale(languageCode, countryCode);
-  }
-
-  // Clean up the breedsCache value of shared preferences when the app is launched
-  Future<void> _removeBreedsCache() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('breedsCache', '');
   }
 
   bool get useLightMode {
