@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,7 @@ import 'package:tails_app/main_screen.dart';
 import 'package:tails_app/data/datasources/local/locale_notifier.dart';
 import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/data/api/mock_api.dart';
+import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 
 class TailsMaterialApp extends StatefulWidget {
   const TailsMaterialApp({super.key});
@@ -99,11 +101,15 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
             backgroundColor: _colorSchemeSeed,
           ),
         ),
-        home: Provider<MockRepository>(
+        home: RepositoryProvider(
           create: (_) => MockRepository(MockAPI()),
-          child: MainScreen(
-            useLightMode: useLightMode,
-            handleBrightnessChange: handleBrightnessChange,
+          child: BlocProvider(
+            create: (context) =>
+                BreedsListBloc(RepositoryProvider.of<MockRepository>(context)),
+            child: MainScreen(
+              useLightMode: useLightMode,
+              handleBrightnessChange: handleBrightnessChange,
+            ),
           ),
         ),
       );
