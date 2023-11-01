@@ -6,54 +6,72 @@ import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/domain/breeds_list.dart';
 
-class BreedsListWidget extends ConsumerWidget {
+class BreedsListWidget extends ConsumerStatefulWidget {
   const BreedsListWidget({super.key, required this.countRemovedBreeds});
 
   final void Function(int) countRemovedBreeds;
 
-  Future<void> _dismissBreed(String dismissedBreedId, WidgetRef ref) async {
+  @override
+  ConsumerState<BreedsListWidget> createState() => _BreedsListState();
+}
+
+class _BreedsListState extends ConsumerState<BreedsListWidget> {
+  @override
+  void initState() {
+    _getInitialBreeds();
+    super.initState();
+  }
+
+  Future<void> _getInitialBreeds() async {
+    await ref.read(breedsProvider.notifier).addInitialBreeds();
+  }
+
+  Future<void> _dismissBreed(String dismissedBreedId) async {
     ref.read(breedsProvider.notifier).deleteBreed(dismissedBreedId);
     int deletedBreedsCount =
         await ref.watch(repositoryProvider).computeDeletedBreedsCount();
-    countRemovedBreeds(deletedBreedsCount);
+    widget.countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Breed>> breeds = ref.watch(breedsProvider);
+  Widget build(BuildContext context) {
+    final List<Breed> breeds = ref.watch(breedsProvider);
 
-    return switch (breeds) {
-      AsyncLoading() => const Center(
-            child: CircularProgressIndicator(
-          color: textColor,
-        )),
-      AsyncData(:final value) => CustomScrollView(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          slivers: [
-            SliverList.builder(
-                itemCount: value.length,
+    return CustomScrollView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      slivers: [
+        breeds.isEmpty
+            ? const SliverToBoxAdapter(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: textColor,
+                  ),
+                ),
+              )
+            : SliverList.builder(
+                itemCount: breeds.length,
                 itemBuilder: (context, index) {
-                  String breedStatus = value[index].status;
-                  String breedId = value[index].id;
+                  String breedStatus = breeds[index].status;
+                  String breedId = breeds[index].id;
 
                   return Dismissible(
                     key: Key(breedId),
                     onDismissed: (direction) async {
-                      await _dismissBreed(breedId, ref);
+                      await _dismissBreed(breedId);
                     },
                     child: ListTile(
                       title: Text(
                         Localizations.localeOf(context).languageCode == "uk"
-                            ? value[index].ukTitle
-                            : value[index].title,
+                            ? breeds[index].ukTitle
+                            : breeds[index].title,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: textColor,
                             ),
                       ),
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(
-                          value[index].imgUrl,
+                          breeds[index].imgUrl,
                         ),
                       ),
                       trailing: StatefulBuilder(
@@ -71,28 +89,22 @@ class BreedsListWidget extends ConsumerWidget {
                             semanticLabel:
                                 'Toggle initial and checked breed statuses',
                             value: breedStatus != 'initial',
-                            onChanged: (bool? isChecked) {
+                            onChanged: (bool? value) {
                               setState(() => breedStatus =
-                                  isChecked == false ? 'initial' : 'checked');
+                                  value == false ? 'initial' : 'checked');
                               ref
                                   .read(breedsProvider.notifier)
-                                  .updateBreedStatus(
-                                      breedId,
-                                      isChecked == false
-                                          ? 'initial'
-                                          : 'checked');
+                                  .updateBreedStatus(breedId,
+                                      value == false ? 'initial' : 'checked');
                             },
                           ),
                         ),
                       ),
                     ),
                   );
-                }),
-          ],
-        ),
-      AsyncError() => const SizedBox.shrink(),
-      _ => const SizedBox.shrink(),
-    };
-    // ref.read(asyncTodosProvider.notifier).toggle(todo.id);
+                },
+              ),
+      ],
+    );
   }
 }
