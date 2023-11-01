@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
 class BreedsListWidget extends StatefulWidget {
-  const BreedsListWidget({super.key, required this.countRemovedBreeds});
-
-  final void Function(int) countRemovedBreeds;
+  const BreedsListWidget({super.key});
 
   @override
   State<BreedsListWidget> createState() => _BreedsListState();
@@ -20,14 +17,6 @@ class _BreedsListState extends State<BreedsListWidget> {
   void didChangeDependencies() {
     context.read<BreedsListBloc>().add(RequestBreedsListEvent());
     super.didChangeDependencies();
-  }
-
-  Future<void> _dismissBreed(String dismissedBreedId) async {
-    context.read<BreedsListBloc>().add(DeleteBreedEvent(dismissedBreedId));
-    int deletedBreedsCount =
-        await RepositoryProvider.of<MockRepository>(context)
-            .computeDeletedBreedsCount();
-    widget.countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
@@ -51,9 +40,10 @@ class _BreedsListState extends State<BreedsListWidget> {
 
                       return Dismissible(
                         key: Key(breed.id),
-                        onDismissed: (direction) async {
-                          await _dismissBreed(breed.id);
-                          // breeds.removeAt(index);
+                        onDismissed: (direction) {
+                          context
+                              .read<BreedsListBloc>()
+                              .add(DeleteBreedEvent(breed.id));
                         },
                         child: ListTile(
                           title: Text(

@@ -13,6 +13,7 @@ class BreedsListLoading extends BreedsListState {}
 
 class BreedsListLoaded extends BreedsListState {
   final List<Breed> breeds;
+  final int removedBreedsCount;
 
-  BreedsListLoaded(this.breeds);
+  BreedsListLoaded(this.breeds, this.removedBreedsCount);
 }

@@ -7,8 +7,8 @@ import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
-import 'package:tails_app/data/datasources/local/locale_notifier.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
+import 'package:tails_app/domain/feature/locale/bloc/locale_bloc.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -135,9 +135,8 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              context
-                                  .read<LocaleNotifier>()
-                                  .changeLocale(const Locale("en", ""));
+                              context.read<LocaleBloc>().add(
+                                  ChangeLocaleEvent(const Locale("en", "")));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -159,9 +158,8 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              context
-                                  .read<LocaleNotifier>()
-                                  .changeLocale(const Locale("uk", "UA"));
+                              context.read<LocaleBloc>().add(
+                                  ChangeLocaleEvent(const Locale("uk", "UA")));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
