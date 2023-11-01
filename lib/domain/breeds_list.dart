@@ -1,36 +1,56 @@
+import 'dart:async';
+
 import 'package:riverpod/riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tails_app/domain/models/breed.dart';
+import 'package:tails_app/data/repository.dart';
 
-class BreedsList extends Notifier<List<Breed>> {
+class BreedsList extends AsyncNotifier<List<Breed>> {
   @override
-  List<Breed> build() {
-    return [];
+  FutureOr<List<Breed>> build() async {
+    state = const AsyncValue.loading();
+    MockRepository repository = ref.watch(repositoryProvider);
+    return await repository.fetchBreeds();
   }
 
-  void deleteBreed(String id) {
-    state = [...state.where((breed) => breed.id != id).toList()];
+  Future<void> addBreed(Breed newBreed) async {
+    state = await AsyncValue.guard(() async {
+      return await state.map(
+        data: (AsyncData<List<Breed>> data) => [...data.value, newBreed],
+        error: (AsyncError<List<Breed>> error) => [],
+        loading: (AsyncLoading<List<Breed>> loading) => [],
+      );
+    });
   }
 
-  void addBreeds(List<Breed> newBreeds) {
-    state = [...state, ...newBreeds];
+  Future<void> deleteBreed(String id) async {
+    state = await AsyncValue.guard(() async {
+      return await state.map(
+        data: (AsyncData<List<Breed>> data) =>
+            [...data.value.where((breed) => breed.id != id).toList()],
+        error: (AsyncError<List<Breed>> error) => [],
+        loading: (AsyncLoading<List<Breed>> loading) => [],
+      );
+    });
   }
 
-  void addBreed(Breed newBreed) {
-    state = [...state, newBreed];
-  }
-
-  void updateBreedStatus(String breedId, String updatedStatus) {
-    state = [
-      ...state.map((breed) {
-        if (breed.id == breedId) breed.status = updatedStatus;
-        return breed;
-      }).toList()
-    ];
+  Future<void> updateBreedStatus(String breedId, String updatedStatus) async {
+    state = await AsyncValue.guard(() async {
+      return await state.map(
+        data: (AsyncData<List<Breed>> data) => [
+          ...data.value.map((breed) {
+            if (breed.id == breedId) breed.status = updatedStatus;
+            return breed;
+          }).toList()
+        ],
+        error: (AsyncError<List<Breed>> error) => [],
+        loading: (AsyncLoading<List<Breed>> loading) => [],
+      );
+    });
   }
 }
 
-final breedsProvider = NotifierProvider<BreedsList, List<Breed>>(
+final breedsProvider = AsyncNotifierProvider<BreedsList, List<Breed>>(
   () => BreedsList(),
 );

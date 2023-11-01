@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tails_app/data/repository.dart';
@@ -7,75 +6,54 @@ import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/domain/breeds_list.dart';
 
-class BreedsListWidget extends ConsumerStatefulWidget {
+class BreedsListWidget extends ConsumerWidget {
   const BreedsListWidget({super.key, required this.countRemovedBreeds});
 
   final void Function(int) countRemovedBreeds;
 
-  @override
-  ConsumerState<BreedsListWidget> createState() => _BreedsListState();
-}
-
-class _BreedsListState extends ConsumerState<BreedsListWidget> {
-  @override
-  void didChangeDependencies() {
-    _getInitialBreeds();
-    super.didChangeDependencies();
-  }
-
-  Future<void> _getInitialBreeds() async {
-    List<Breed> initialBreeds =
-        await context.read<MockRepository>().fetchBreeds();
-    ref.read(breedsProvider.notifier).addBreeds(initialBreeds);
-  }
-
-  Future<void> _dismissBreed(String dismissedBreedId) async {
+  Future<void> _dismissBreed(String dismissedBreedId, WidgetRef ref) async {
     ref.read(breedsProvider.notifier).deleteBreed(dismissedBreedId);
     int deletedBreedsCount =
-        await context.read<MockRepository>().computeDeletedBreedsCount();
-    widget.countRemovedBreeds(deletedBreedsCount);
+        await ref.watch(repositoryProvider).computeDeletedBreedsCount();
+    countRemovedBreeds(deletedBreedsCount);
   }
 
   @override
-  Widget build(BuildContext context) {
-    List<Breed> breeds = ref.watch(breedsProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<Breed>> breeds = ref.watch(breedsProvider);
 
-    return CustomScrollView(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      slivers: [
-        breeds.isEmpty
-            ? const SliverToBoxAdapter(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: textColor,
-                  ),
-                ),
-              )
-            : SliverList.builder(
-                itemCount: breeds.length,
+    return switch (breeds) {
+      AsyncLoading() => const Center(
+            child: CircularProgressIndicator(
+          color: textColor,
+        )),
+      AsyncData(:final value) => CustomScrollView(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          slivers: [
+            SliverList.builder(
+                itemCount: value.length,
                 itemBuilder: (context, index) {
-                  String breedStatus = breeds[index].status;
-                  String breedId = breeds[index].id;
+                  String breedStatus = value[index].status;
+                  String breedId = value[index].id;
 
                   return Dismissible(
                     key: Key(breedId),
                     onDismissed: (direction) async {
-                      await _dismissBreed(breedId);
-                      // breeds.removeAt(index);
+                      await _dismissBreed(breedId, ref);
                     },
                     child: ListTile(
                       title: Text(
                         Localizations.localeOf(context).languageCode == "uk"
-                            ? breeds[index].ukTitle
-                            : breeds[index].title,
+                            ? value[index].ukTitle
+                            : value[index].title,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               color: textColor,
                             ),
                       ),
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(
-                          breeds[index].imgUrl,
+                          value[index].imgUrl,
                         ),
                       ),
                       trailing: StatefulBuilder(
@@ -93,13 +71,16 @@ class _BreedsListState extends ConsumerState<BreedsListWidget> {
                             semanticLabel:
                                 'Toggle initial and checked breed statuses',
                             value: breedStatus != 'initial',
-                            onChanged: (bool? value) {
+                            onChanged: (bool? isChecked) {
                               setState(() => breedStatus =
-                                  value == false ? 'initial' : 'checked');
+                                  isChecked == false ? 'initial' : 'checked');
                               ref
                                   .read(breedsProvider.notifier)
-                                  .updateBreedStatus(breedId,
-                                      value == false ? 'initial' : 'checked');
+                                  .updateBreedStatus(
+                                      breedId,
+                                      isChecked == false
+                                          ? 'initial'
+                                          : 'checked');
                             },
                           ),
                         ),
@@ -107,7 +88,11 @@ class _BreedsListState extends ConsumerState<BreedsListWidget> {
                     ),
                   );
                 }),
-      ],
-    );
+          ],
+        ),
+      AsyncError() => const SizedBox.shrink(),
+      _ => const SizedBox.shrink(),
+    };
+    // ref.read(asyncTodosProvider.notifier).toggle(todo.id);
   }
 }

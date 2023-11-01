@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 
 import 'package:tails_app/main_screen.dart';
 import 'package:tails_app/data/datasources/local/locale_notifier.dart';
-import 'package:tails_app/data/repository.dart';
-import 'package:tails_app/data/api/mock_api.dart';
 
 class TailsMaterialApp extends StatefulWidget {
   const TailsMaterialApp({super.key});
@@ -99,12 +97,9 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
             backgroundColor: _colorSchemeSeed,
           ),
         ),
-        home: Provider<MockRepository>(
-          create: (_) => MockRepository(MockAPI()),
-          child: MainScreen(
-            useLightMode: useLightMode,
-            handleBrightnessChange: handleBrightnessChange,
-          ),
+        home: MainScreen(
+          useLightMode: useLightMode,
+          handleBrightnessChange: handleBrightnessChange,
         ),
       );
     });
