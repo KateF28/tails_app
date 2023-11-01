@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tails_app/main_screen.dart';
-import 'package:tails_app/data/datasources/local/locale_provider.dart';
+import 'package:tails_app/data/datasources/local/locale_notifier.dart';
 
 class TailsMaterialApp extends StatefulWidget {
   const TailsMaterialApp({super.key});
@@ -19,26 +20,11 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
   static const _colorSchemeSeed = Color(0xFF7950f2);
 
   @override
-  void initState() {
-    super.initState();
-    _removeBreedsCache();
-  }
-
-  @override
   void didChangeDependencies() {
-    LocaleProvider.of(context).updateState(() {
-      setState(() {});
-    });
     _fetchLocale().then((locale) {
-      LocaleProvider.of(context).changeLocale(locale);
+      context.read<LocaleNotifier>().changeLocale(locale);
     });
     super.didChangeDependencies();
-  }
-
-  // Clean up the breedsCache value of shared preferences when the app is launched
-  Future<void> _removeBreedsCache() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('breedsCache', '');
   }
 
   /*
@@ -72,46 +58,50 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tails App',
-      locale: LocaleProvider.localeOf(context),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', ''), // English
-        Locale('uk', 'UA'), // Ukrainian
-      ],
-      themeMode: themeMode,
-      theme: ThemeData(
-        useMaterial3: _useMaterial3,
-        colorSchemeSeed: _colorSchemeSeed,
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF3F0FF),
-        textTheme: const TextTheme(
-          titleLarge: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 22.0,
-          ),
-          bodyLarge: TextStyle(
-            fontWeight: FontWeight.bold,
+    return Consumer<LocaleNotifier>(
+        builder: (BuildContext context, LocaleNotifier value, Widget? child) {
+      return MaterialApp(
+        title: 'Tails App',
+        locale: value.locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''), // English
+          Locale('uk', 'UA'), // Ukrainian
+        ],
+        themeMode: themeMode,
+        theme: ThemeData(
+          useMaterial3: _useMaterial3,
+          colorSchemeSeed: _colorSchemeSeed,
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: const Color(0xFFF3F0FF),
+          textTheme: const TextTheme(
+            titleLarge: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22.0,
+            ),
+            bodyLarge: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-      darkTheme: ThemeData(
+        darkTheme: ThemeData(
           useMaterial3: _useMaterial3,
           colorSchemeSeed: _colorSchemeSeed,
           brightness: Brightness.dark,
           appBarTheme: const AppBarTheme(
             backgroundColor: _colorSchemeSeed,
-          )),
-      home: MainScreen(
-        useLightMode: useLightMode,
-        handleBrightnessChange: handleBrightnessChange,
-      ),
-    );
+          ),
+        ),
+        home: MainScreen(
+          useLightMode: useLightMode,
+          handleBrightnessChange: handleBrightnessChange,
+        ),
+      );
+    });
   }
 }

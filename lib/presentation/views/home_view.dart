@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/presentation/widgets/breeds_list.dart';
 
 /// This is main screen page/view content
 class HomeView extends StatefulWidget {
-  final List<Breed> breeds;
-
-  const HomeView({super.key, required this.breeds});
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -37,7 +34,7 @@ class _HomeViewState extends State<HomeView> {
                 style: Theme.of(context).textTheme.bodyLarge!,
               ),
             ),
-            BreedsList(countRemovedBreeds: _countRemovedBreeds),
+            BreedsListWidget(countRemovedBreeds: _countRemovedBreeds),
           ],
         );
       },
