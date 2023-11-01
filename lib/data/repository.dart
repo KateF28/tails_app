@@ -1,17 +1,27 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tails_app/data/api/mock_api.dart';
 import 'package:tails_app/domain/models/breed.dart';
 
 int _countDeletedBreeds(int value) => ++value;
 
+final mockDataProvider = Provider<MockAPI>(
+  (ref) => MockAPI(),
+);
+
+final repositoryProvider = Provider<MockRepository>((ref) {
+  final mockData = ref.watch(mockDataProvider);
+  return MockRepository(mockData);
+});
+
 class MockRepository {
-  late MockAPI api;
+  final MockAPI _mockApi;
   int _deletedBreedsCount = 0;
 
-  MockRepository(this.api);
+  MockRepository(this._mockApi);
 
-  Future<List<Breed>> fetchBreeds() async => await api.getBreeds();
+  Future<List<Breed>> fetchBreeds() async => await _mockApi.getBreeds();
 
   Future<int> computeDeletedBreedsCount() async {
     int newDeletedBreedsCount =
