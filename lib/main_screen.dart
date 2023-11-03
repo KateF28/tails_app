@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
-import 'package:tails_app/domain/feature/locale/bloc/locale_bloc.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
 class MainScreen extends StatefulWidget {
@@ -16,10 +16,12 @@ class MainScreen extends StatefulWidget {
     super.key,
     required this.useLightMode,
     required this.handleBrightnessChange,
+    required this.hiveBox,
   });
 
   final bool useLightMode;
   final void Function(bool useLightMode) handleBrightnessChange;
+  final Box hiveBox;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -135,8 +137,8 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              context.read<LocaleBloc>().add(
-                                  ChangeLocaleEvent(const Locale("en", "")));
+                              widget.hiveBox
+                                  .put('locale', const Locale("en", ""));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -158,8 +160,8 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              context.read<LocaleBloc>().add(
-                                  ChangeLocaleEvent(const Locale("uk", "UA")));
+                              widget.hiveBox
+                                  .put('locale', const Locale("uk", "UA"));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,

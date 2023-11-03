@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/main_screen.dart';
-import 'package:tails_app/domain/feature/locale/bloc/locale_bloc.dart';
 
 class TailsMaterialApp extends StatefulWidget {
   const TailsMaterialApp({super.key});
@@ -17,12 +16,6 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
   final bool _useMaterial3 = true;
   ThemeMode themeMode = ThemeMode.system;
   static const _colorSchemeSeed = Color(0xFF7950f2);
-
-  @override
-  void didChangeDependencies() {
-    context.read<LocaleBloc>().add(InitLocaleEvent());
-    super.didChangeDependencies();
-  }
 
   bool get useLightMode {
     switch (themeMode) {
@@ -42,21 +35,14 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
     });
   }
 
-  Locale _getLocale(LocaleState state) {
-    return switch (state) {
-      LocaleInitial() => state.locale,
-      LocaleUpdated() => state.locale,
-      _ => const Locale('uk', 'UA'),
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocaleBloc, LocaleState>(
-      builder: (BuildContext context, LocaleState state) {
+    return ValueListenableBuilder<Box>(
+      valueListenable: Hive.box('settings').listenable(keys: ['locale']),
+      builder: (_, Box box, ___) {
         return MaterialApp(
           title: 'Tails App',
-          locale: _getLocale(state),
+          locale: box.get('locale', defaultValue: const Locale('uk', 'UA')),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -94,6 +80,7 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
           home: MainScreen(
             useLightMode: useLightMode,
             handleBrightnessChange: handleBrightnessChange,
+            hiveBox: box,
           ),
         );
       },
