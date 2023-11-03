@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/presentation/views/home_view.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
-import 'package:tails_app/data/datasources/local/locale_notifier.dart';
-import 'package:tails_app/domain/breeds_list.dart';
+import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
-class MainScreen extends ConsumerStatefulWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({
     super.key,
     required this.useLightMode,
     required this.handleBrightnessChange,
+    required this.hiveBox,
   });
 
   final bool useLightMode;
   final void Function(bool useLightMode) handleBrightnessChange;
+  final Box hiveBox;
 
   @override
-  ConsumerState<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen> {
+class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerTileIndex = 0;
   Breed _chosenDropdownValue = breedsForAdding.first;
   final List<Breed> _breedsForAdding = breedsForAdding;
@@ -39,7 +40,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
   void _onBreedAddingDialogClosed() {
-    ref.read(breedsProvider.notifier).addBreed(_chosenDropdownValue);
+    context.read<BreedsListBloc>().add(AddBreedEvent(_chosenDropdownValue));
 
     setState(() {
       _breedsForAdding.remove(_chosenDropdownValue);
@@ -136,9 +137,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              context
-                                  .read<LocaleNotifier>()
-                                  .changeLocale(const Locale("en", ""));
+                              widget.hiveBox
+                                  .put('locale', const Locale("en", ""));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
@@ -160,9 +160,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           ),
                           TextButton(
                             onPressed: () {
-                              context
-                                  .read<LocaleNotifier>()
-                                  .changeLocale(const Locale("uk", "UA"));
+                              widget.hiveBox
+                                  .put('locale', const Locale("uk", "UA"));
                             },
                             style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,

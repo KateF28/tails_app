@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart' as provider;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/tails_material_app.dart';
-import 'package:tails_app/data/datasources/local/locale_notifier.dart';
+import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
+import 'package:tails_app/data/repository.dart';
+import 'package:tails_app/data/api/mock_api.dart';
 
-void main() {
-  runApp(
-    const ProviderScope(child: MyApp()),
-  );
+void main() async {
+  Bloc.observer = _MyStoreAppBlocObserver();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(LocaleAdapter());
+  await Hive.openBox('settings');
+  runApp(const MyApp());
 }
 
 /// This is main App widget
@@ -17,9 +22,47 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return provider.ChangeNotifierProvider<LocaleNotifier>(
-      create: (_) => LocaleNotifier(const Locale('uk', 'UA')),
-      child: const TailsMaterialApp(),
+    return RepositoryProvider(
+      create: (_) => MockRepository(MockAPI()),
+      child: BlocProvider(
+        create: (BuildContext context) => BreedsListBloc(
+          RepositoryProvider.of<MockRepository>(context),
+        ),
+        child: const TailsMaterialApp(),
+      ),
     );
+  }
+}
+
+/// Bloc observer for logging purposes
+class _MyStoreAppBlocObserver extends BlocObserver {
+  @override
+  void onEvent(Bloc bloc, Object? event) {
+    debugPrint(event?.toString());
+    super.onEvent(bloc, event);
+  }
+
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    debugPrint(
+        '$bloc changed from ${change.currentState} to ${change.nextState}');
+    super.onChange(bloc, change);
+  }
+}
+
+// Hive adapter for Locale
+class LocaleAdapter extends TypeAdapter<Locale> {
+  @override
+  final typeId = 0;
+
+  @override
+  Locale read(BinaryReader reader) {
+    return Locale(reader.read());
+  }
+
+  @override
+  void write(BinaryWriter writer, Locale obj) {
+    writer.write(obj.languageCode);
+    writer.write(obj.countryCode);
   }
 }
