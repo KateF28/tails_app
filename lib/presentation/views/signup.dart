@@ -33,7 +33,8 @@ class SignupView extends StatelessWidget {
                   backgroundColor: MaterialStateProperty.all<Color>(textColor),
                 ),
                 onPressed: () {
-                  Provider.of<AuthInfo>(context, listen: false).login();
+                  // Log a user in, letting all the listeners know
+                  context.read<AuthInfo>().login();
                   context.go('/menu/settings');
                 },
                 child: Text(

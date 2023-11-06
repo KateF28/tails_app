@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/main_screen.dart';
-import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
-import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/menu_screen.dart';
 import 'package:tails_app/settings_screen.dart';
 import 'package:tails_app/search_screen.dart';
@@ -20,21 +17,24 @@ RouterConfig<Object> configRouter(
   void Function(bool useLightMode) handleBrightnessChange,
   Box box,
 ) {
-  final authInfo = AuthInfo();
+  final loginInfo = AuthInfo();
 
   return GoRouter(
     debugLogDiagnostics: true,
-    redirect: (context, state) {
-      final loggedIn = authInfo.isLoggedIn;
-      final isLoggingIn = state.uri.toString() == '/menu/settings/login';
-      final isSigningUp = state.uri.toString() == '/menu/settings/signup';
+    redirect: (context, GoRouterState state) {
+      final loggedIn = loginInfo.isLoggedIn;
+      final String location = state.uri.toString();
+      final isLoggingIn = location == '/menu/settings/login' ||
+          location == '/menu/settings/signup';
 
+      // if the user is logged in but still on the login page, send them to
+      // the settings page
       if (loggedIn && isLoggingIn) return '/menu/settings';
-      if (loggedIn && isSigningUp) return '/menu/settings';
 
+      // no need to redirect at all
       return null;
     },
-    refreshListenable: authInfo,
+    refreshListenable: loginInfo,
     routes: [
       GoRoute(
         path: '/',
@@ -62,16 +62,9 @@ RouterConfig<Object> configRouter(
             name: 'breed',
             path: 'breeds/:breedId',
             pageBuilder: (context, state) {
-              final breedsListState =
-                  context.read<BreedsListBloc>().state as BreedsListLoaded;
-              final Breed breed;
-              breed = breedsListState.breeds.firstWhere(
-                (element) => element.id == state.pathParameters['breedId'],
-              );
-
               return MaterialPage(
                 key: state.pageKey,
-                child: BreedScreen(breed: breed),
+                child: BreedScreen(breedId: state.pathParameters['breedId']!),
               );
             },
           )

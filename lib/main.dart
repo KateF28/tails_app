@@ -12,6 +12,8 @@ import 'package:tails_app/domain/feature/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// Remove the # prefix from the web URL
   usePathUrlStrategy();
   Bloc.observer = _MyStoreAppBlocObserver();
 

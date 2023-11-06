@@ -40,7 +40,8 @@ class _LoginViewState extends State<LoginView> {
                   backgroundColor: MaterialStateProperty.all<Color>(textColor),
                 ),
                 onPressed: () {
-                  Provider.of<AuthInfo>(context, listen: false).login();
+                  // Log a user in, letting all the listeners know
+                  context.read<AuthInfo>().login();
                   context.go('/menu/settings');
                 },
                 child: Text(
@@ -60,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
                         MaterialStateProperty.all<Color>(Colors.transparent),
                   ),
                   onPressed: () {
-                    context.go('/menu/settings/signup');
+                    context.push('/menu/settings/signup');
                   },
                   child: Text(
                     appLocalizations.createAccount,
