@@ -8,6 +8,10 @@ Presentation of the app work:
 
 ![Presentation of the app work](/presentation.gif)
 
+The app navigation scheme demonstration:
+
+![The app navigation scheme demonstration](/navigation.gif)
+
 ## Getting Started
 
 A few resources to get you started if this is your first Flutter project:

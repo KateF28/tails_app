@@ -5,19 +5,8 @@ import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart'
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 
-class BreedsListWidget extends StatefulWidget {
+class BreedsListWidget extends StatelessWidget {
   const BreedsListWidget({super.key});
-
-  @override
-  State<BreedsListWidget> createState() => _BreedsListState();
-}
-
-class _BreedsListState extends State<BreedsListWidget> {
-  @override
-  void didChangeDependencies() {
-    context.read<BreedsListBloc>().add(RequestBreedsListEvent());
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {

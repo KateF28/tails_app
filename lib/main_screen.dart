@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:tails_app/presentation/views/home_view.dart';
+import 'package:tails_app/presentation/views/home.dart';
 import 'package:tails_app/domain/models/breed.dart';
 import 'package:tails_app/utils/constants.dart';
 import 'package:tails_app/data/datasources/local/breeds.dart';
@@ -29,6 +30,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerTileIndex = 0;
+  int _selectedBottomNavigationBarItemIndex = 1;
   Breed _chosenDropdownValue = breedsForAdding.first;
   final List<Breed> _breedsForAdding = breedsForAdding;
 
@@ -36,6 +38,27 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedDrawerTileIndex = index;
     });
+  }
+
+  /// Navigate to another page or open dialog for a breed adding if possible
+  void _onBottomNavigationBarItemTapped(int index) {
+    setState(() {
+      _selectedBottomNavigationBarItemIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        context.go('/search');
+        break;
+      case 1:
+        if (_breedsForAdding.isNotEmpty) {
+          _onBNBMainItemTapped();
+        }
+        break;
+      case 2:
+        context.go('/menu');
+        break;
+    }
   }
 
   // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
@@ -51,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // Open dialog for adding a new breed
-  void _onFABPressed() {
+  void _onBNBMainItemTapped() {
     showGeneralDialog(
       context: context,
       barrierColor: dialogBgColor,
@@ -113,6 +136,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(
           'Tails App',
@@ -241,15 +265,9 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: const HomeView(),
-      floatingActionButton: _breedsForAdding.isEmpty
-          ? const SizedBox.shrink()
-          : FloatingActionButton(
-              onPressed: _onFABPressed,
-              tooltip: 'Open dialog for adding a breed',
-              child: const Icon(Icons.add),
-            ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: _selectedBottomNavigationBarItemIndex,
+        onTap: _onBottomNavigationBarItemTapped,
         showSelectedLabels: false,
         selectedIconTheme: const IconThemeData(size: 40),
         items: <BottomNavigationBarItem>[
@@ -260,7 +278,7 @@ class _MainScreenState extends State<MainScreen> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.camera_alt),
             label: '',
-            tooltip: 'Add a dog',
+            tooltip: 'Add a dog if possible',
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.grid_view),

@@ -19,6 +19,18 @@
   "@search": {
     "description": "Bottom navigation bar last item title"
   },
+  "logInOrSignUp": "Log in or Sign up",
+  "@logInOrSignUp": {
+    "description": "Settings page log in and sign up button text"
+    },
+    "createAccount": "Create account",
+    "@createAccount": {
+      "description": "Login page create account button text"
+    },
+    "logIn": "Log in",
+    "@logIn": {
+      "description": "Login page log in button text"
+    },
   "lightTheme": "Light theme",
   "@lightTheme": {
     "description": "Chosen brightness mode"

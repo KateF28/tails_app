@@ -5,6 +5,9 @@
   "sportingGroup": "Група спорту",
   "menu": "Меню",
   "search": "Пошук",
+  "logInOrSignUp": "Увійти або зареєструватися",
+  "createAccount": "Зареєструватись",
+  "logIn": "Увійти",
   "lightTheme": "Світла тема",
   "deletedBreedsCount": "Кількість видалених порід: {count}",
   "addBreed": "Додай породу"
