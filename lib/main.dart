@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tails_app/tails_material_app.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 import 'package:tails_app/data/repository.dart';
 import 'package:tails_app/data/api/mock_api.dart';
+import 'package:tails_app/domain/feature/auth.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  /// Remove the # prefix from the web URL
+  usePathUrlStrategy();
   Bloc.observer = _MyStoreAppBlocObserver();
 
   await Hive.initFlutter();
@@ -27,8 +34,11 @@ class MyApp extends StatelessWidget {
       child: BlocProvider(
         create: (BuildContext context) => BreedsListBloc(
           RepositoryProvider.of<MockRepository>(context),
+        )..add(RequestBreedsListEvent()),
+        child: ChangeNotifierProvider(
+          create: (BuildContext context) => AuthInfo(),
+          child: const TailsMaterialApp(),
         ),
-        child: const TailsMaterialApp(),
       ),
     );
   }
@@ -50,7 +60,7 @@ class _MyStoreAppBlocObserver extends BlocObserver {
   }
 }
 
-// Hive adapter for Locale
+/// Hive adapter for Locale
 class LocaleAdapter extends TypeAdapter<Locale> {
   @override
   final typeId = 0;
