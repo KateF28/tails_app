@@ -17,3 +17,9 @@ class BreedsListLoaded extends BreedsListState {
 
   BreedsListLoaded(this.breeds, this.removedBreedsCount);
 }
+
+class BreedsListError extends BreedsListState {
+  final String errorMessage;
+
+  BreedsListError(this.errorMessage);
+}

@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tails_app/utils/constants.dart';
+import 'package:tails_app/utils/environment.dart';
 import 'package:tails_app/domain/feature/auth.dart';
 
 /// This is login screen page/view content
@@ -36,8 +36,10 @@ class _LoginViewState extends State<LoginView> {
             Center(
               child: TextButton(
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(textColor),
-                  backgroundColor: MaterialStateProperty.all<Color>(textColor),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Environment.textColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Environment.textColor),
                 ),
                 onPressed: () {
                   // Log a user in, letting all the listeners know
@@ -47,7 +49,7 @@ class _LoginViewState extends State<LoginView> {
                 child: Text(
                   appLocalizations.logIn,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: whiteColor,
+                        color: Environment.whiteColor,
                       ),
                 ),
               ),
@@ -66,7 +68,7 @@ class _LoginViewState extends State<LoginView> {
                   child: Text(
                     appLocalizations.createAccount,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: textColor,
+                          color: Environment.textColor,
                         ),
                   ),
                 ),

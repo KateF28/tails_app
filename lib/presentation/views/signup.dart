@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tails_app/domain/feature/auth.dart';
-import 'package:tails_app/utils/constants.dart';
+import 'package:tails_app/utils/environment.dart';
 
 /// This is signup screen page/view content
 class SignupView extends StatelessWidget {
@@ -29,8 +29,10 @@ class SignupView extends StatelessWidget {
             Center(
               child: TextButton(
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(textColor),
-                  backgroundColor: MaterialStateProperty.all<Color>(textColor),
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Environment.textColor),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Environment.textColor),
                 ),
                 onPressed: () {
                   // Log a user in, letting all the listeners know
@@ -40,7 +42,7 @@ class SignupView extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.createAccount,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: whiteColor,
+                        color: Environment.whiteColor,
                       ),
                 ),
               ),
