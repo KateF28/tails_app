@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,11 +42,15 @@ class BreedsListWidget extends StatelessWidget {
                             color: Environment.textColor,
                           ),
                     ),
-                    leading: const CircleAvatar(
-                      backgroundImage: AssetImage(
-                        'images/placeholder.jpg',
-                      ),
-                    ),
+                    leading: breed.image?.url == null
+                        ? const CircleAvatar(
+                            backgroundImage:
+                                AssetImage('images/placeholder.jpg'),
+                          )
+                        : CircleAvatar(
+                            backgroundImage:
+                                CachedNetworkImageProvider(breed.image!.url!),
+                          ),
                     trailing: StatefulBuilder(
                       builder: (context, setState) => AnimatedContainer(
                         width: breed.status == 'initial' ? 20.0 : 30.0,

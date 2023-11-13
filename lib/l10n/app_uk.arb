@@ -10,5 +10,8 @@
   "logIn": "Увійти",
   "lightTheme": "Світла тема",
   "deletedBreedsCount": "Кількість видалених порід: {count}",
-  "addBreed": "Додай породу"
+  "breedsGroup": "Група порід",
+  "lifeSpan": "Тривалість життя",
+  "origin": "Походження",
+  "temperament": "Темперамент"
 }

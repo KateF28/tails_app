@@ -15,11 +15,13 @@ Future<void> main() async {
 
   /// Remove the # prefix from the web URL
   usePathUrlStrategy();
+
   Bloc.observer = _MyStoreAppBlocObserver();
 
   await Hive.initFlutter();
   Hive.registerAdapter(LocaleAdapter());
   await Hive.openBox('settings');
+
   runApp(const MyApp());
 }
 

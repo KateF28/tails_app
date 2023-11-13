@@ -22,11 +22,8 @@ class DogsApi {
 
   Future<List<Breed>> getBreeds() async {
     try {
-      final Response response =
-          await _client.get(Environment.breeds, queryParameters: {
-        'limit': 25,
-        'page': 0,
-      });
+      final Response response = await _client.get(Environment.breeds,
+          queryParameters: {'limit': 25, 'page': 0, 'size': "small"});
 
       if (response.statusCode == 200 && response.data != null) {
         BreedsList breedsList = BreedsList.fromJson(response.data);
