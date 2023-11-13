@@ -69,7 +69,7 @@ class _BreedScreenState extends State<BreedScreen> {
             title: Text(
               Localizations.localeOf(context).languageCode == "uk"
                   ? breed.ukTitle
-                  : breed.title,
+                  : breed.name,
               style: GoogleFonts.roboto(
                 textStyle: textTheme.titleLarge,
                 fontWeight: FontWeight.w700,

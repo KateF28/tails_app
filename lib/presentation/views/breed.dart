@@ -22,7 +22,7 @@ class BreedView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
-                    breed.imgUrl,
+                    'images/placeholder.jpg',
                     fit: BoxFit.cover,
                     height: 150,
                   ),
@@ -33,11 +33,59 @@ class BreedView extends StatelessWidget {
               child: Text(
                 Localizations.localeOf(context).languageCode == "uk"
                     ? breed.ukTitle
-                    : breed.title,
+                    : breed.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 20.0),
               ),
+            ),
+            SliverToBoxAdapter(
+              child: breed.breedGroup != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 20.0, left: 20.0),
+                      child: Text(
+                        'Breeds group: ${breed.breedGroup!}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            SliverToBoxAdapter(
+              child: breed.lifeSpan != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        'Lifespan: ${breed.lifeSpan!}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            SliverToBoxAdapter(
+              child: breed.origin != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        'Origin: ${breed.origin!}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            SliverToBoxAdapter(
+              child: breed.temperament != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        'Temperament: ${breed.temperament!}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.0),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         );

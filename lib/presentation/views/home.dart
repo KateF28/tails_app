@@ -13,20 +13,24 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: BlocSelector<BreedsListBloc, BreedsListState, int>(
-                selector: (state) =>
-                    state is BreedsListLoaded ? state.removedBreedsCount : 0,
-                builder: (context, removedBreedsCount) {
-                  return Text(
-                    AppLocalizations.of(context)!
-                        .deletedBreedsCount(removedBreedsCount.toString()),
-                    style: Theme.of(context).textTheme.bodyLarge!,
-                  );
-                },
+        return CustomScrollView(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: BlocSelector<BreedsListBloc, BreedsListState, int>(
+                  selector: (state) =>
+                      state is BreedsListLoaded ? state.removedBreedsCount : 0,
+                  builder: (context, removedBreedsCount) {
+                    return Text(
+                      AppLocalizations.of(context)!
+                          .deletedBreedsCount(removedBreedsCount.toString()),
+                      style: Theme.of(context).textTheme.bodyLarge!,
+                    );
+                  },
+                ),
               ),
             ),
             const BreedsListWidget(),

@@ -6,9 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/presentation/views/home.dart';
-import 'package:tails_app/domain/models/breed.dart';
-import 'package:tails_app/utils/constants.dart';
-import 'package:tails_app/data/datasources/local/breeds.dart';
+import 'package:tails_app/utils/environment.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 
 /// Main screen with appBar, Drawer, FAB, BottomNavigationBar
@@ -31,8 +29,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerTileIndex = 0;
   int _selectedBottomNavigationBarItemIndex = 1;
-  Breed _chosenDropdownValue = breedsForAdding.first;
-  final List<Breed> _breedsForAdding = breedsForAdding;
 
   void _onDrawerItemTapped(int index) {
     setState(() {
@@ -51,9 +47,6 @@ class _MainScreenState extends State<MainScreen> {
         context.go('/search');
         break;
       case 1:
-        if (_breedsForAdding.isNotEmpty) {
-          _onBNBMainItemTapped();
-        }
         break;
       case 2:
         context.go('/menu');
@@ -61,70 +54,9 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // Add breed to the page breeds list and cache them, remove an added breed from dropdown options
-  void _onBreedAddingDialogClosed() {
-    context.read<BreedsListBloc>().add(AddBreedEvent(_chosenDropdownValue));
-
-    setState(() {
-      _breedsForAdding.remove(_chosenDropdownValue);
-      if (_breedsForAdding.isNotEmpty) {
-        _chosenDropdownValue = _breedsForAdding.first;
-      }
-    });
-  }
-
-  // Open dialog for adding a new breed
-  void _onBNBMainItemTapped() {
-    showGeneralDialog(
-      context: context,
-      barrierColor: dialogBgColor,
-      barrierDismissible: true,
-      barrierLabel: 'Adding a breed dialog',
-      transitionDuration: transitionDuration,
-      pageBuilder: (_, __, ___) {
-        return Stack(
-          fit: StackFit.loose,
-          alignment: AlignmentDirectional.bottomCenter,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.add,
-                color: whiteColor,
-                size: 40.0,
-              ),
-              tooltip: 'Add breed and close dialog',
-              onPressed: () {
-                _onBreedAddingDialogClosed();
-                Navigator.pop(context);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 70.0),
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                body: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: Text(
-                        AppLocalizations.of(context)!.addBreed,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                          decoration: TextDecoration.none,
-                          color: whiteColor,
-                        ),
-                      ),
-                    ),
-                    _buildNewBreedDropdown(context),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  // Request breeds again
+  void _onFABPressed() {
+    context.read<BreedsListBloc>().add(RequestBreedsListEvent());
   }
 
   @override
@@ -175,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
                               child: const Text(
                                 'EN',
                                 style: TextStyle(
-                                  color: textColor,
+                                  color: Environment.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20.0,
                                 ),
@@ -198,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
                               child: const Text(
                                 'УК',
                                 style: TextStyle(
-                                  color: textColor,
+                                  color: Environment.textColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20.0,
                                 ),
@@ -265,6 +197,11 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: const HomeView(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onFABPressed,
+        tooltip: 'Request breeds once more',
+        child: const Icon(Icons.refresh),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedBottomNavigationBarItemIndex,
         onTap: _onBottomNavigationBarItemTapped,
@@ -288,28 +225,4 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
-  /// The function returns DropDown for a new breed selection
-  Widget _buildNewBreedDropdown(ctx) => DropdownButtonFormField<String>(
-        value: _chosenDropdownValue.title,
-        icon: const Icon(Icons.arrow_downward, color: whiteColor),
-        elevation: 16,
-        style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
-              color: textColor,
-            ),
-        onChanged: (String? value) {
-          setState(() {
-            _chosenDropdownValue =
-                breedsForAdding.firstWhere((breed) => breed.title == value!);
-          });
-        },
-        items: breedsForAdding.map<DropdownMenuItem<String>>((Breed value) {
-          return DropdownMenuItem<String>(
-            value: value.title,
-            child: Text(Localizations.localeOf(ctx).languageCode == "uk"
-                ? value.ukTitle
-                : value.title),
-          );
-        }).toList(),
-      );
 }

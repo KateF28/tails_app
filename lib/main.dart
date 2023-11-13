@@ -4,10 +4,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tails_app/tails_material_app.dart';
+import 'package:tails_app/presentation/widgets/tails_material_app.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
-import 'package:tails_app/data/repository.dart';
-import 'package:tails_app/data/api/mock_api.dart';
+import 'package:tails_app/data/datasources/remote/repository.dart';
+import 'package:tails_app/data/datasources/remote/dogs_api.dart';
 import 'package:tails_app/domain/feature/auth.dart';
 
 Future<void> main() async {
@@ -30,10 +30,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (_) => MockRepository(MockAPI()),
+      create: (_) => Repository(DogsApi()),
       child: BlocProvider(
         create: (BuildContext context) => BreedsListBloc(
-          RepositoryProvider.of<MockRepository>(context),
+          RepositoryProvider.of<Repository>(context),
         )..add(RequestBreedsListEvent()),
         child: ChangeNotifierProvider(
           create: (BuildContext context) => AuthInfo(),

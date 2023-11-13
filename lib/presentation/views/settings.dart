@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tails_app/utils/constants.dart';
+import 'package:tails_app/utils/environment.dart';
 import 'package:tails_app/domain/feature/auth.dart';
 
 /// This is settings screen page/view content
@@ -38,8 +38,8 @@ class SettingsView extends StatelessWidget {
                     ? Center(
                         child: TextButton(
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(whiteColor),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Environment.whiteColor),
                           ),
                           onPressed: () {
                             context.go('/menu/settings/login');
