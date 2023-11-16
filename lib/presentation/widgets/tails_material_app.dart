@@ -58,6 +58,7 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
           darkTheme: appTheme.darkTheme,
           routerConfig:
               configRouter(_useLightMode, _handleBrightnessChange, box),
+          showPerformanceOverlay: false,
         );
       },
     );

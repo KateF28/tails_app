@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:tails_app/domain/models/breed.dart';
 
@@ -13,6 +15,8 @@ class BreedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return CustomScrollView(
@@ -21,11 +25,17 @@ class BreedView extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Image.asset(
-                    'images/placeholder.jpg',
-                    fit: BoxFit.cover,
-                    height: 150,
-                  ),
+                  child: breed.image?.url == null
+                      ? Image.asset(
+                          'images/placeholder.jpg',
+                          fit: BoxFit.cover,
+                          height: 150,
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: breed.image!.url!,
+                          fit: BoxFit.cover,
+                          height: 150,
+                        ),
                 ),
               ),
             ),
@@ -40,52 +50,54 @@ class BreedView extends StatelessWidget {
               ),
             ),
             SliverToBoxAdapter(
-              child: breed.breedGroup != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 20.0, left: 20.0),
+              child: breed.breedGroup == null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20.0, left: 20.0, right: 20.0),
                       child: Text(
-                        'Breeds group: ${breed.breedGroup!}',
+                        '${appLocalizations.breedsGroup}: ${breed.breedGroup!}',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
             ),
             SliverToBoxAdapter(
-              child: breed.lifeSpan != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+              child: breed.lifeSpan == null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(
-                        'Lifespan: ${breed.lifeSpan!}',
+                        '${appLocalizations.lifeSpan}: ${breed.lifeSpan!}',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
             ),
             SliverToBoxAdapter(
-              child: breed.origin != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+              child: breed.origin == null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(
-                        'Origin: ${breed.origin!}',
+                        '${appLocalizations.origin}: ${breed.origin}',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
             ),
             SliverToBoxAdapter(
-              child: breed.temperament != null
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+              child: breed.temperament == null
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0, bottom: 20.0),
                       child: Text(
-                        'Temperament: ${breed.temperament!}',
+                        '${appLocalizations.temperament}: ${breed.temperament!}',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20.0),
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
             ),
           ],
         );

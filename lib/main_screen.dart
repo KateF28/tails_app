@@ -101,16 +101,14 @@ class _MainScreenState extends State<MainScreen> {
                                 minimumSize: const Size(40, 30),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 alignment: Alignment.center),
-                            child: Opacity(
-                              opacity:
-                                  appCurrentLanguageCode == 'uk' ? 0.5 : 1.0,
-                              child: const Text(
-                                'EN',
-                                style: TextStyle(
-                                  color: Environment.textColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                ),
+                            child: Text(
+                              'EN',
+                              style: TextStyle(
+                                color: appCurrentLanguageCode == 'uk'
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Environment.textColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
                               ),
                             ),
                           ),
@@ -124,16 +122,14 @@ class _MainScreenState extends State<MainScreen> {
                                 minimumSize: const Size(40, 30),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 alignment: Alignment.center),
-                            child: Opacity(
-                              opacity:
-                                  appCurrentLanguageCode == 'en' ? 0.5 : 1.0,
-                              child: const Text(
-                                'УК',
-                                style: TextStyle(
-                                  color: Environment.textColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                ),
+                            child: Text(
+                              'УК',
+                              style: TextStyle(
+                                color: appCurrentLanguageCode == 'en'
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Environment.textColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
                               ),
                             ),
                           ),

@@ -45,8 +45,20 @@
         }
     }
   },
-  "addBreed": "Add a breed",
-  "@addBreed": {
-    "description": "Adding breed dialog title"
+  "breedsGroup": "Breeds group",
+  "@breedsGroup": {
+    "description": "A breeds group title for a chosen breed information"
+  },
+  "lifeSpan": "Lifespan",
+  "@lifeSpan": {
+    "description": "A lifespan title for a chosen breed information"
+  },
+  "origin": "Origin",
+    "@origin": {
+      "description": "An origin title for a chosen breed information"
+    },
+"temperament": "Temperament",
+  "@temperament": {
+    "description": "A temperament title for a chosen breed information"
   }
 }
