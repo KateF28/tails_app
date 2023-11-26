@@ -1,10 +1,14 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'metrics.g.dart';
 
 @JsonSerializable()
-class Metrics {
+@HiveType(typeId: 3)
+class Metrics extends HiveObject {
+  @HiveField(0)
   final String? imperial;
+  @HiveField(1)
   final String? metric;
 
   Metrics({

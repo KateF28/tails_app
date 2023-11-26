@@ -26,54 +26,44 @@ class BreedsListWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 Breed breed = state.breeds[index];
 
-                return Dismissible(
+                return ListTile(
                   key: Key(breed.id),
-                  onDismissed: (direction) {
-                    context
-                        .read<BreedsListBloc>()
-                        .add(DeleteBreedEvent(breed.id));
-                  },
-                  child: ListTile(
-                    title: Text(
-                      Localizations.localeOf(context).languageCode == "uk"
-                          ? breed.ukTitle
-                          : breed.name,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: Environment.textColor,
-                          ),
-                    ),
-                    leading: breed.image?.url == null
-                        ? const CircleAvatar(
-                            backgroundImage:
-                                AssetImage('images/placeholder.jpg'),
-                          )
-                        : CircleAvatar(
-                            backgroundImage:
-                                CachedNetworkImageProvider(breed.image!.url!),
-                          ),
-                    trailing: StatefulBuilder(
-                      builder: (context, setState) => AnimatedContainer(
-                        width: breed.status == 'initial' ? 20.0 : 30.0,
-                        height: breed.status == 'initial' ? 20.0 : 30.0,
-                        color: breed.status == 'initial'
-                            ? Colors.transparent
-                            : Environment.textColor,
-                        duration: const Duration(seconds: 1),
-                        margin: EdgeInsets.only(
-                            right: breed.status == 'initial' ? 10.0 : 5.0),
-                        curve: Curves.fastOutSlowIn,
-                        child: Checkbox(
-                          semanticLabel:
-                              'Toggle initial and checked breed statuses',
-                          value: breed.status != 'initial',
-                          onChanged: (bool? value) {
-                            setState(() => breed.status =
-                                value == false ? 'initial' : 'checked');
-                            context.read<BreedsListBloc>().add(
-                                UpdateBreedStatusEvent(breed.id,
-                                    value == false ? 'initial' : 'checked'));
-                          },
+                  title: Text(
+                    breed.name,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Environment.textColor,
                         ),
+                  ),
+                  leading: breed.image?.url == null
+                      ? const CircleAvatar(
+                          backgroundImage: AssetImage('images/placeholder.jpg'),
+                        )
+                      : CircleAvatar(
+                          backgroundImage:
+                              CachedNetworkImageProvider(breed.image!.url!),
+                        ),
+                  trailing: StatefulBuilder(
+                    builder: (context, setState) => AnimatedContainer(
+                      width: breed.status == 'initial' ? 20.0 : 30.0,
+                      height: breed.status == 'initial' ? 20.0 : 30.0,
+                      color: breed.status == 'initial'
+                          ? Colors.transparent
+                          : Environment.textColor,
+                      duration: const Duration(seconds: 1),
+                      margin: EdgeInsets.only(
+                          right: breed.status == 'initial' ? 10.0 : 5.0),
+                      curve: Curves.fastOutSlowIn,
+                      child: Checkbox(
+                        semanticLabel:
+                            'Toggle initial and checked breed statuses',
+                        value: breed.status != 'initial',
+                        onChanged: (bool? value) {
+                          setState(() => breed.status =
+                              value == false ? 'initial' : 'checked');
+                          context.read<BreedsListBloc>().add(
+                              UpdateBreedStatusEvent(breed.id,
+                                  value == false ? 'initial' : 'checked'));
+                        },
                       ),
                     ),
                   ),

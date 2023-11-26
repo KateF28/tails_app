@@ -1,3 +1,4 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'imageAttributes.dart';
 import 'metrics.dart';
@@ -5,29 +6,43 @@ import 'metrics.dart';
 part 'breed.g.dart';
 
 @JsonSerializable()
-class Breed {
+@HiveType(typeId: 1)
+class Breed extends HiveObject {
   @_Converter()
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String name;
+  @HiveField(2, defaultValue: '')
   final String ukTitle;
+  @HiveField(3)
   final ImageAttributes? image;
+  @HiveField(4, defaultValue: 'initial')
   String status;
 
   @JsonKey(name: 'reference_image_id')
+  @HiveField(5)
   final String? referenceImageId;
 
   @JsonKey(name: 'breed_group')
+  @HiveField(6)
   final String? breedGroup;
 
   @JsonKey(name: 'bred_for')
+  @HiveField(7)
   final String? breedFor;
 
   @JsonKey(name: 'life_span')
+  @HiveField(8)
   final String? lifeSpan;
 
+  @HiveField(9)
   final String? origin;
+  @HiveField(10)
   final String? temperament;
+  @HiveField(11)
   final Metrics? weight;
+  @HiveField(12)
   final Metrics? height;
 
   Breed({

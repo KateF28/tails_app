@@ -3,8 +3,10 @@ import 'package:meta/meta.dart';
 
 import 'package:tails_app/data/datasources/remote/repository.dart';
 import 'package:tails_app/domain/models/breed.dart';
+import 'package:tails_app/data/datasources/local/breeds_dao.dart';
 
 part 'breeds_list_event.dart';
+
 part 'breeds_list_state.dart';
 
 class BreedsListBloc extends Bloc<BreedsListEvent, BreedsListState> {
@@ -13,7 +15,6 @@ class BreedsListBloc extends Bloc<BreedsListEvent, BreedsListState> {
   BreedsListBloc(this.repository)
       : super(BreedsListEmpty(List<Breed>.empty(growable: true))) {
     on<RequestBreedsListEvent>(_onBreedsRequested);
-    on<DeleteBreedEvent>(_onBreedDeleted);
     on<UpdateBreedStatusEvent>(_onBreedStatusUpdated);
   }
 
@@ -21,20 +22,17 @@ class BreedsListBloc extends Bloc<BreedsListEvent, BreedsListState> {
       RequestBreedsListEvent event, Emitter<BreedsListState> emit) async {
     emit(BreedsListLoading());
     try {
-      List<Breed> breeds = await repository.fetchBreeds();
-      emit(BreedsListLoaded(breeds, 0));
+      List<Breed>? daoBreeds = await BreedsDao().reedBreeds();
+      if (daoBreeds == null) {
+        List<Breed> breeds = await repository.fetchBreeds();
+        await BreedsDao().createBreeds(breeds);
+        emit(BreedsListLoaded(breeds));
+      } else {
+        emit(BreedsListLoaded(daoBreeds));
+      }
     } on Exception catch (e) {
       emit(BreedsListError(e.toString()));
     }
-  }
-
-  Future<void> _onBreedDeleted(
-      DeleteBreedEvent event, Emitter<BreedsListState> emit) async {
-    List<Breed> newBreeds = List.of((state as BreedsListLoaded).breeds)
-        .where((breed) => breed.id != event.breedId)
-        .toList();
-    int deletedBreedsCount = await repository.computeDeletedBreedsCount();
-    emit(BreedsListLoaded(newBreeds, deletedBreedsCount));
   }
 
   void _onBreedStatusUpdated(
@@ -44,7 +42,6 @@ class BreedsListBloc extends Bloc<BreedsListEvent, BreedsListState> {
       if (breed.id == event.breedId) breed.status = event.status;
       return breed;
     }).toList();
-    emit(BreedsListLoaded(
-        newBreeds, (state as BreedsListLoaded).removedBreedsCount));
+    emit(BreedsListLoaded(newBreeds));
   }
 }
