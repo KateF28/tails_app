@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,10 @@ import 'package:tails_app/domain/feature/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  /// Keep splash screen until initialization has completed
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   /// Remove the # prefix from the web URL
   usePathUrlStrategy();
@@ -21,6 +26,8 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(LocaleAdapter());
   await Hive.openBox('settings');
+
+  FlutterNativeSplash.remove();
 
   runApp(const MyApp());
 }

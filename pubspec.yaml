@@ -49,6 +49,7 @@ dependencies:
   dio: ^5.3.3
   json_annotation: ^4.8.1
   cached_network_image: ^3.3.0
+  flutter_native_splash: ^2.3.6
 
 dev_dependencies:
   flutter_test:
