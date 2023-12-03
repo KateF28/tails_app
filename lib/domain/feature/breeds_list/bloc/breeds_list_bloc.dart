@@ -22,10 +22,12 @@ class BreedsListBloc extends Bloc<BreedsListEvent, BreedsListState> {
       RequestBreedsListEvent event, Emitter<BreedsListState> emit) async {
     emit(BreedsListLoading());
     try {
-      List<Breed>? daoBreeds = await BreedsDao().reedBreeds();
-      if (daoBreeds == null) {
+      final daoBreeds = await BreedsDao().reedBreeds();
+      if (daoBreeds.isEmpty) {
         List<Breed> breeds = await repository.fetchBreeds();
-        await BreedsDao().createBreeds(breeds);
+        if (breeds.isNotEmpty) {
+          BreedsDao().createBreeds(breeds);
+        }
         emit(BreedsListLoaded(breeds));
       } else {
         emit(BreedsListLoaded(daoBreeds));
