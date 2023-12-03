@@ -52,11 +52,7 @@ class SearchView extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 5.0),
                                 child: Text(
-                                  Localizations.localeOf(context)
-                                              .languageCode ==
-                                          "uk"
-                                      ? state.breeds[idx].ukTitle
-                                      : state.breeds[idx].name,
+                                  state.breeds[idx].name,
                                   style: const TextStyle(
                                     color: Environment.textColor,
                                     fontWeight: FontWeight.bold,

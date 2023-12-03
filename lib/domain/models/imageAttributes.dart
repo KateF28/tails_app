@@ -1,12 +1,18 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'imageAttributes.g.dart';
 
 @JsonSerializable()
-class ImageAttributes {
+@HiveType(typeId: 2)
+class ImageAttributes extends HiveObject {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final int? height;
+  @HiveField(2)
   final int? width;
+  @HiveField(3)
   final String? url;
 
   ImageAttributes({

@@ -10,6 +10,9 @@ import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart'
 import 'package:tails_app/data/datasources/remote/repository.dart';
 import 'package:tails_app/data/datasources/remote/dogs_api.dart';
 import 'package:tails_app/domain/feature/auth.dart';
+import 'package:tails_app/domain/models/breed.dart';
+import 'package:tails_app/domain/models/imageAttributes.dart';
+import 'package:tails_app/domain/models/metrics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,9 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(LocaleAdapter());
+  Hive.registerAdapter(BreedAdapter());
+  Hive.registerAdapter(ImageAttributesAdapter());
+  Hive.registerAdapter(MetricsAdapter());
   await Hive.openBox('settings');
 
   FlutterNativeSplash.remove();
