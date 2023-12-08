@@ -16,7 +16,7 @@ class SignupScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
-            context.pop();
+            context.go('/menu/settings/login');
           },
           icon: const Icon(Icons.arrow_back_ios_new),
         ),

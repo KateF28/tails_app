@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:tails_app/domain/models/breed.dart';
 
@@ -25,7 +26,7 @@ class BreedView extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: breed.image?.url == null
+                  child: breed.image?.url == null || kIsWeb
                       ? Image.asset(
                           'images/placeholder.jpg',
                           fit: BoxFit.cover,

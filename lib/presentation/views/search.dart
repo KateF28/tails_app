@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:tails_app/utils/environment.dart';
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
@@ -35,7 +36,8 @@ class SearchView extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            image: state.breeds[idx].image?.url == null
+                            image: state.breeds[idx].image?.url == null ||
+                                    kIsWeb
                                 ? const DecorationImage(
                                     fit: BoxFit.contain,
                                     image: AssetImage('images/placeholder.jpg'))
