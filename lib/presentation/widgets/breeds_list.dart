@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 import 'package:tails_app/domain/models/breed.dart';
@@ -34,7 +35,7 @@ class BreedsListWidget extends StatelessWidget {
                           color: Environment.textColor,
                         ),
                   ),
-                  leading: breed.image?.url == null
+                  leading: breed.image?.url == null || kIsWeb
                       ? const CircleAvatar(
                           backgroundImage: AssetImage('images/placeholder.jpg'),
                         )

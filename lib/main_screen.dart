@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,9 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:tails_app/presentation/views/home.dart';
 import 'package:tails_app/utils/environment.dart';
-import 'package:tails_app/domain/feature/breeds_list/bloc/breeds_list_bloc.dart';
 
-/// Main screen with appBar, Drawer, FAB, BottomNavigationBar
+/// Main screen with appBar, Drawer, BottomNavigationBar
 class MainScreen extends StatefulWidget {
   const MainScreen({
     super.key,
@@ -27,14 +25,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedDrawerTileIndex = 0;
   int _selectedBottomNavigationBarItemIndex = 1;
-
-  void _onDrawerItemTapped(int index) {
-    setState(() {
-      _selectedDrawerTileIndex = index;
-    });
-  }
 
   /// Navigate to another page or open dialog for a breed adding if possible
   void _onBottomNavigationBarItemTapped(int index) {
@@ -54,17 +45,12 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // Request breeds again
-  void _onFABPressed() {
-    context.read<BreedsListBloc>().add(RequestBreedsListEvent());
-  }
-
   @override
   Widget build(BuildContext context) {
     String appCurrentLanguageCode =
         Localizations.localeOf(context).languageCode;
     final textTheme = Theme.of(context).textTheme;
-    AppLocalizations? appLocalizations = AppLocalizations.of(context);
+    AppLocalizations appLocalizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -136,20 +122,6 @@ class _MainScreenState extends State<MainScreen> {
                         ],
                       ),
                     ),
-                    ListTile(
-                      title: Text(
-                        appLocalizations!.breeds,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      selected: _selectedDrawerTileIndex == 0,
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        _onDrawerItemTapped(0);
-                        Navigator.pop(context);
-                      },
-                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(17.0, 30.0, 19.0, 0),
                       child: Row(
@@ -175,17 +147,9 @@ class _MainScreenState extends State<MainScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
-                child: Column(
-                  children: [
-                    Text(
-                      appLocalizations.dogsBreedGroups,
-                      style: GoogleFonts.merriweather(),
-                    ),
-                    Text(
-                      appLocalizations.ukraine,
-                      style: GoogleFonts.merriweather(),
-                    ),
-                  ],
+                child: Text(
+                  appLocalizations.ukraine,
+                  style: GoogleFonts.merriweather(),
                 ),
               ),
             ],
@@ -193,11 +157,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: const HomeView(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onFABPressed,
-        tooltip: 'Request breeds once more',
-        child: const Icon(Icons.refresh),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedBottomNavigationBarItemIndex,
         onTap: _onBottomNavigationBarItemTapped,

@@ -63,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
                         MaterialStateProperty.all<Color>(Colors.transparent),
                   ),
                   onPressed: () {
-                    context.push('/menu/settings/signup');
+                    context.go('/menu/settings/signup');
                   },
                   child: Text(
                     appLocalizations.createAccount,

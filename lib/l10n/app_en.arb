@@ -1,8 +1,4 @@
 {
-  "dogsBreedGroups": "Dogs breed groups",
-  "@dogsBreedGroups": {
-    "description": "This is used in drawer footer"
-  },
   "ukraine": "Ukraine",
   "@ukraine": {
       "description": "Country of the app origin"
