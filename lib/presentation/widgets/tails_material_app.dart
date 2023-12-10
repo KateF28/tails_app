@@ -37,6 +37,7 @@ class _TailsMaterialAppState extends State<TailsMaterialApp> {
   @override
   Widget build(BuildContext context) {
     AppTheme appTheme = AppTheme();
+
     return ValueListenableBuilder<Box>(
       valueListenable: Hive.box('settings').listenable(keys: ['locale']),
       builder: (_, Box box, ___) {

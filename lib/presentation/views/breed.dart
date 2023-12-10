@@ -28,7 +28,7 @@ class BreedView extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   child: breed.image?.url == null || kIsWeb
                       ? Image.asset(
-                          'images/placeholder.jpg',
+                          'assets/images/placeholder.jpg',
                           fit: BoxFit.cover,
                           height: 150,
                         )

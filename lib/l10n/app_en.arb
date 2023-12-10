@@ -56,5 +56,9 @@
 "temperament": "Temperament",
   "@temperament": {
     "description": "A temperament title for a chosen breed information"
-  }
+  },
+  "selectImage": "Select image",
+    "@selectImage": {
+      "description": "Selection image button title"
+    }
 }

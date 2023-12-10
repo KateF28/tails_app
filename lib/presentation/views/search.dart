@@ -36,17 +36,18 @@ class SearchView extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            image: state.breeds[idx].image?.url == null ||
-                                    kIsWeb
-                                ? const DecorationImage(
-                                    fit: BoxFit.contain,
-                                    image: AssetImage('images/placeholder.jpg'))
-                                : DecorationImage(
-                                    fit: BoxFit.contain,
-                                    image: CachedNetworkImageProvider(
-                                      state.breeds[idx].image!.url!,
-                                    ),
-                                  ),
+                            image:
+                                state.breeds[idx].image?.url == null || kIsWeb
+                                    ? const DecorationImage(
+                                        fit: BoxFit.contain,
+                                        image: AssetImage(
+                                            'assets/images/placeholder.jpg'))
+                                    : DecorationImage(
+                                        fit: BoxFit.contain,
+                                        image: CachedNetworkImageProvider(
+                                          state.breeds[idx].image!.url!,
+                                        ),
+                                      ),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
