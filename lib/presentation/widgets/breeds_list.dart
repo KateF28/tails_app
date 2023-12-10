@@ -37,7 +37,8 @@ class BreedsListWidget extends StatelessWidget {
                   ),
                   leading: breed.image?.url == null || kIsWeb
                       ? const CircleAvatar(
-                          backgroundImage: AssetImage('images/placeholder.jpg'),
+                          backgroundImage:
+                              AssetImage('assets/images/placeholder.jpg'),
                         )
                       : CircleAvatar(
                           backgroundImage:

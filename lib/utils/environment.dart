@@ -11,6 +11,7 @@ class Environment {
   /// Colors:
   static const whiteColor = Colors.white;
   static const textColor = Color(0xFF7950f2);
+  static const bgColor = Color(0xFFF3F0FF);
   static Color dialogBgColor = Colors.black12.withOpacity(0.87);
   static const Color errorColor = Colors.red;
 

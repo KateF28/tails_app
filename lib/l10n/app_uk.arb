@@ -12,5 +12,6 @@
   "breedsGroup": "Група порід",
   "lifeSpan": "Тривалість життя",
   "origin": "Походження",
-  "temperament": "Темперамент"
+  "temperament": "Темперамент",
+  "selectImage": "Оберіть картинку"
 }

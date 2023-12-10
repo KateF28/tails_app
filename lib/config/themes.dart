@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tails_app/utils/environment.dart';
 
 class AppTheme {
   static const _colorSchemeSeed = Color(0xFF7950F2);
@@ -12,7 +13,7 @@ class AppTheme {
       useMaterial3: _useMaterial3,
       colorSchemeSeed: _colorSchemeSeed,
       brightness: Brightness.light,
-      scaffoldBackgroundColor: const Color(0xFFF3F0FF),
+      scaffoldBackgroundColor: Environment.bgColor,
       textTheme: const TextTheme(
         titleLarge: TextStyle(
           fontWeight: FontWeight.bold,

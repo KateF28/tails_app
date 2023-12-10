@@ -1,12 +1,12 @@
 # Tails App :dog2:
 
-Flutter project. Dogs breed identifier. Please familiarise yourself with the app at the structural level in the app wireframe below:
+Flutter project. Dogs breed identifier.
+
+![The app screenshot](/screenshot.jpg)
+
+Please familiarise yourself with the app at the structural level in the app wireframe below:
 
 ![The tails app wireframe](/app_wireframe.png)
-
-Presentation of the app work:
-
-![Presentation of the app work](/presentation.gif)
 
 The app navigation scheme demonstration:
 
